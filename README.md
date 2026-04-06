@@ -47,25 +47,36 @@ An intelligent platform that helps you find Quranic guidance for any topic in yo
 - Python 3.11+
 - Docker & Docker Compose (optional)
 
-### Option 1: With Docker
+### Option 1: With Docker (Recommended)
 
 ```bash
 # Clone the repository
 git clone <repo-url>
 cd Interpreting-the-Quran-using-artificial-intelligence
 
-# Copy environment variables
-cp .env.example .env
-# Edit .env with your API keys
+# Setup environment file, then edit .env and add your API keys
+make setup
+
+# Build all Docker images
+make build
 
 # Start all services
-docker-compose up -d
+make up
 ```
 
 Access:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
 - API Docs: http://localhost:8000/docs
+
+Useful commands:
+```bash
+make logs    # stream logs from all services
+make ps      # show container status
+make down    # stop all services
+make clean   # stop and delete all data
+make help    # show all available commands
+```
 
 ### Option 2: Local Development
 
