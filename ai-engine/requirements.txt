@@ -1,0 +1,7 @@
+langchain==0.3.25
+langchain-openai==0.3.11
+openai==1.10.0
+pinecone-client==3.0.0
+python-dotenv==1.0.0
+redis==5.0.1
+aiohttp==3.13.3
