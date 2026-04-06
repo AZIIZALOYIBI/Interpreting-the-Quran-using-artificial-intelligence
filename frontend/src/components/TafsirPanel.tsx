@@ -40,13 +40,22 @@ export default function TafsirPanel({ ayah, onClose }: TafsirPanelProps) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (ayah) {
-      setLoading(true);
-      setTimeout(() => {
+    if (!ayah) return;
+
+    let isMounted = true;
+    const timer = setTimeout(() => {
+      if (isMounted) {
         setTafsirList(MOCK_TAFSIR);
         setLoading(false);
-      }, 500);
-    }
+      }
+    }, 500);
+
+    setLoading(true);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
   }, [ayah]);
 
   if (!ayah) return null;
