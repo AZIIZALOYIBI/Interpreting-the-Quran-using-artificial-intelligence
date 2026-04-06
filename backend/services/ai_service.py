@@ -110,8 +110,8 @@ async def get_quran_solution(question: str, category: Optional[str] = None) -> D
         category = classify_question(question)
 
     # Try OpenAI if key is available
-    api_key = os.getenv("OPENAI_API_KEY", "")
-    if api_key.strip():
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    if api_key:
         try:
             return await _get_openai_solution(question, category, api_key)
         except Exception:
