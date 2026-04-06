@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quran-ai-backend"
+version = "1.0.0"
+description = "حلول الحياة من القرآن الكريم — FastAPI backend powered by AI"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+keywords = ["quran", "ai", "tafsir", "fastapi", "arabic"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Framework :: FastAPI",
+    "Natural Language :: Arabic",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "fastapi==0.109.1",
+    "uvicorn[standard]==0.27.0",
+    "sqlalchemy==2.0.25",
+    "alembic==1.13.1",
+    "psycopg2-binary==2.9.9",
+    "redis==5.0.1",
+    "httpx==0.26.0",
+    "openai==1.10.0",
+    "langchain==0.3.25",
+    "langchain-openai==0.3.11",
+    "langchain-community==0.3.27",
+    "python-dotenv==1.0.0",
+    "pydantic==2.6.0",
+    "pydantic-settings==2.1.0",
+    "pinecone-client==3.0.0",
+    "tiktoken==0.5.2",
+    "python-multipart==0.0.22",
+    "aiohttp==3.13.3",
+]
+
+[project.urls]
+Homepage = "https://github.com/AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence"
+Repository = "https://github.com/AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence"
+Issues = "https://github.com/AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence/issues"
+
+[tool.setuptools.packages.find]
+where = ["backend"]
+
+[tool.setuptools.package-dir]
+"" = "backend"
