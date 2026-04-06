@@ -1,4 +1,4 @@
-import type { ChatRequest, ChatResponse, Ayah, Tafsir, Category, SurahInfo } from "@/types";
+import type { ChatRequest, ChatResponse, Ayah, Tafsir, Category, SurahInfo, ScientificMiracle } from "@/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -55,7 +55,7 @@ export async function getSurah(surahId: number): Promise<{ info: SurahInfo; ayah
   return fetchAPI<{ info: SurahInfo; ayahs: Ayah[] }>(`/api/quran/surah/${surahId}`);
 }
 
-export async function getMiracles(category?: string): Promise<unknown[]> {
+export async function getMiracles(category?: string): Promise<ScientificMiracle[]> {
   const path = category ? `/api/miracles/${category}` : "/api/miracles";
-  return fetchAPI<unknown[]>(path);
+  return fetchAPI<ScientificMiracle[]>(path);
 }
