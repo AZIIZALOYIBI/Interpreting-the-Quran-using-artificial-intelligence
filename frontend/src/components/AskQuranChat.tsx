@@ -22,7 +22,9 @@ const CATEGORY_LABELS: Record<string, string> = {
   self_development: "التطوير الذاتي",
   law: "القانون",
   environment: "البيئة",
+  ethics: "الأخلاق والقيم",
   chat: "عام",
+  general: "عام",
 };
 
 function AyahCard({ ayah }: { ayah: Ayah }) {

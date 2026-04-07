@@ -1,4 +1,4 @@
-.PHONY: help build up down logs ps clean dev-frontend dev-backend
+.PHONY: help build up down logs ps clean dev-frontend dev-backend dev-ai test test-cov
 
 # Default target
 help:
@@ -17,6 +17,8 @@ help:
 	@echo "  make clean        — حذف الحاويات والبيانات"
 	@echo "  make dev-frontend — تشغيل الواجهة الأمامية محلياً"
 	@echo "  make dev-backend  — تشغيل الخادم الخلفي محلياً"
+	@echo "  make test          — تشغيل اختبارات الـ Backend"
+	@echo "  make test-cov      — تشغيل الاختبارات مع تقرير التغطية"
 	@echo ""
 
 # ── Initial setup ────────────────────────────────────────────────────────────
@@ -80,6 +82,14 @@ dev-backend:
 
 dev-ai:
 	cd ai-engine && pip install -r requirements.txt && python worker.py
+
+# ── Tests ─────────────────────────────────────────────────────────────────────
+
+test:
+	cd backend && python -m pytest tests/ -v
+
+test-cov:
+	cd backend && python -m pytest tests/ --cov=. --cov-report=term-missing
 
 # ── Database ──────────────────────────────────────────────────────────────────
 

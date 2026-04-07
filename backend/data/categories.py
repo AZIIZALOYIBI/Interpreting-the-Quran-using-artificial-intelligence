@@ -70,6 +70,16 @@ CATEGORIES = [
         "text_color": "text-teal-700",
     },
     {
+        "id": "ethics",
+        "name_ar": "الأخلاق والقيم",
+        "name_en": "Ethics & Values",
+        "icon": "🌟",
+        "description": "منظومة الأخلاق الإسلامية والقيم القرآنية في التعامل مع النفس والآخرين",
+        "color": "bg-indigo-600",
+        "bg_color": "bg-indigo-50",
+        "text_color": "text-indigo-700",
+    },
+    {
         "id": "chat",
         "name_ar": "اسأل القرآن",
         "name_en": "Ask Quran",
