@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from schemas.chat import ChatRequest, ChatResponse
 from services import ai_service
 from data.categories import CATEGORIES
@@ -31,6 +31,6 @@ def get_categories():
 def get_category(category_id: str):
     category = next((c for c in CATEGORIES if c["id"] == category_id), None)
     if not category:
-        return {"error": "التصنيف غير موجود"}
+        raise HTTPException(status_code=404, detail="التصنيف غير موجود")
     ayahs = SAMPLE_AYAHS.get(category_id, [])
     return {"category": category, "ayahs": ayahs}
