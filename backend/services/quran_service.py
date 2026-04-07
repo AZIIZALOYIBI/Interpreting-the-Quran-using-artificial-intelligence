@@ -1,4 +1,5 @@
 import httpx
+from urllib.parse import quote
 from typing import List, Optional, Dict, Any
 
 ALQURAN_API = "https://api.alquran.cloud/v1"
@@ -62,7 +63,7 @@ async def get_surah(surah_id: int) -> Optional[Dict[str, Any]]:
 async def search_ayahs(query: str) -> List[Dict[str, Any]]:
     try:
         async with httpx.AsyncClient(timeout=15.0) as client:
-            resp = await client.get(f"{ALQURAN_API}/search/{query}/all/ar")
+            resp = await client.get(f"{ALQURAN_API}/search/{quote(query, safe='')}/all/ar")
             if resp.status_code == 200:
                 data = resp.json()
                 matches = data.get("data", {}).get("matches", [])
