@@ -1,11 +1,11 @@
 import logging
 import time
 from contextlib import asynccontextmanager
-from typing import Any
+from typing import Any, Awaitable, Callable
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from config import settings
@@ -30,7 +30,11 @@ async def lifespan(app: FastAPI):
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """Add OWASP-recommended security headers to every response."""
 
-    async def dispatch(self, request: Request, call_next: Any) -> Any:
+    async def dispatch(
+        self,
+        request: Request,
+        call_next: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
@@ -140,7 +144,7 @@ def health() -> dict[str, Any]:
             "used_mb": used_mb,
             "available_mb": available_mb,
         }
-    except Exception:
+    except (OSError, ValueError):
         memory_info = {"error": "unavailable"}
 
     return {
