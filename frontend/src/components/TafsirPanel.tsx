@@ -43,6 +43,11 @@ export default function TafsirPanel({ ayah, onClose }: TafsirPanelProps) {
     if (!ayah) return;
 
     let isMounted = true;
+
+    const startTimer = setTimeout(() => {
+      if (isMounted) setLoading(true);
+    }, 0);
+
     const timer = setTimeout(() => {
       if (isMounted) {
         setTafsirList(MOCK_TAFSIR);
@@ -50,10 +55,9 @@ export default function TafsirPanel({ ayah, onClose }: TafsirPanelProps) {
       }
     }, 500);
 
-    setLoading(true);
-
     return () => {
       isMounted = false;
+      clearTimeout(startTimer);
       clearTimeout(timer);
     };
   }, [ayah]);
