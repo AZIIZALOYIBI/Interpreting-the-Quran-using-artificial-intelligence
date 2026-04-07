@@ -22,7 +22,7 @@ def client():
 @pytest.fixture(autouse=True)
 def reset_rate_limiter():
     """Clear in-memory rate-limit counters before every test so they don't bleed across tests."""
-    from routers.chat import _ip_request_times
-    _ip_request_times.clear()
+    from routers.chat import reset_rate_limiter_for_testing
+    reset_rate_limiter_for_testing()
     yield
-    _ip_request_times.clear()
+    reset_rate_limiter_for_testing()

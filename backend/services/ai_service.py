@@ -214,7 +214,7 @@ def classify_question(question: str) -> str:
         for kw in keywords:
             if kw in question_lower:
                 scores[category] += 1
-    best = max(scores, key=lambda k: scores[k])
+    best: str = max(scores, key=lambda k: scores[k])
     return best if scores[best] > 0 else "general"
 
 

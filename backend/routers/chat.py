@@ -44,6 +44,11 @@ def _check_rate_limit(ip: str) -> None:
     times.append(now)
 
 
+def reset_rate_limiter_for_testing() -> None:
+    """Clear all in-memory rate-limit state.  Intended for use in tests only."""
+    _ip_request_times.clear()
+
+
 @router.post("/ask-quran", response_model=ChatResponse)
 async def ask_quran(request: ChatRequest, req: Request) -> ChatResponse:
     """Handle a Quranic guidance request with rate limiting."""

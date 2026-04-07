@@ -141,7 +141,6 @@ class TestRateLimiting:
         assert response.status_code == 429
         data = response.json()
         assert "detail" in data
-
     def test_rate_limit_window_expires(self, client):
         """After clearing old timestamps the request should succeed again."""
         from routers.chat import _ip_request_times
