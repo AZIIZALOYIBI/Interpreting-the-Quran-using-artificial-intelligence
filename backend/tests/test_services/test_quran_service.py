@@ -27,6 +27,15 @@ def _mock_client(response: MagicMock) -> MagicMock:
     return mock_client
 
 
+def _error_client() -> MagicMock:
+    """ينشئ AsyncClient وهمياً يُطلق استثناء عند الاستدعاء."""
+    mock_client = AsyncMock()
+    mock_client.get = AsyncMock(side_effect=Exception("network error"))
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=None)
+    return mock_client
+
+
 # ── بيانات الاختبار ──────────────────────────────────────────────────────────
 
 SAMPLE_AYAH_RESPONSE = {
@@ -136,12 +145,7 @@ class TestGetAyah:
         """يُعيد None عند فشل الاتصال."""
         from services.quran_service import get_ayah
 
-        mock_client = AsyncMock()
-        mock_client.get = AsyncMock(side_effect=Exception("connection error"))
-        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
-        mock_client.__aexit__ = AsyncMock(return_value=None)
-
-        with patch("httpx.AsyncClient", return_value=mock_client):
+        with patch("httpx.AsyncClient", return_value=_error_client()):
             result = asyncio.run(get_ayah(1, 1))
 
         assert result is None
@@ -193,12 +197,7 @@ class TestGetSurah:
         """يُعيد None عند فشل الاتصال."""
         from services.quran_service import get_surah
 
-        mock_client = AsyncMock()
-        mock_client.get = AsyncMock(side_effect=Exception("timeout"))
-        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
-        mock_client.__aexit__ = AsyncMock(return_value=None)
-
-        with patch("httpx.AsyncClient", return_value=mock_client):
+        with patch("httpx.AsyncClient", return_value=_error_client()):
             result = asyncio.run(get_surah(1))
 
         assert result is None
@@ -250,12 +249,7 @@ class TestGetSurahList:
         """يُعيد قائمة فارغة عند فشل الاتصال."""
         from services.quran_service import get_surah_list
 
-        mock_client = AsyncMock()
-        mock_client.get = AsyncMock(side_effect=Exception("network error"))
-        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
-        mock_client.__aexit__ = AsyncMock(return_value=None)
-
-        with patch("httpx.AsyncClient", return_value=mock_client):
+        with patch("httpx.AsyncClient", return_value=_error_client()):
             result = asyncio.run(get_surah_list())
 
         assert result == []
@@ -314,12 +308,7 @@ class TestSearchAyahs:
         """يُعيد قائمة فارغة عند فشل الاتصال."""
         from services.quran_service import search_ayahs
 
-        mock_client = AsyncMock()
-        mock_client.get = AsyncMock(side_effect=Exception("connection refused"))
-        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
-        mock_client.__aexit__ = AsyncMock(return_value=None)
-
-        with patch("httpx.AsyncClient", return_value=mock_client):
+        with patch("httpx.AsyncClient", return_value=_error_client()):
             result = asyncio.run(search_ayahs("الصبر"))
 
         assert result == []

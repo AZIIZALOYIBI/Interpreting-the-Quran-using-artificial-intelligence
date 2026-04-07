@@ -17,7 +17,7 @@ class ChatRequest(BaseModel):
     @classmethod
     def validate_category(cls, v: Optional[str]) -> Optional[str]:
         if v is not None and v not in VALID_CATEGORIES:
-            raise ValueError(f"الفئة غير مدعومة. الفئات المتاحة: {', '.join(sorted(VALID_CATEGORIES))}")
+            raise ValueError("الفئة المحددة غير مدعومة")
         return v
 
 

@@ -20,7 +20,7 @@
 │   ├── schemas/       # Pydantic models (ayah, category, chat, tafsir)
 │   ├── data/          # بيانات ثابتة (categories, sample_ayahs, scientific_miracles)
 │   ├── models/        # SQLAlchemy ORM models
-│   └── tests/         # pytest tests (68 tests, 79% coverage)
+│   └── tests/         # pytest tests (101 tests, 90%+ coverage)
 ├── ai-engine/         # LangChain + OpenAI RAG pipeline
 │   ├── quran_solver.py
 │   ├── prompts/       # domain-specific prompts per category
