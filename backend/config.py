@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
 
 
@@ -10,13 +10,11 @@ class Settings(BaseSettings):
     PINECONE_ENV: str = ""
     CORS_ORIGINS: str = "http://localhost:3000"
 
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
     @property
     def cors_origins_list(self) -> List[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",")]
-
-    class Config:
-        env_file = ".env"
-        extra = "ignore"
 
 
 settings = Settings()
