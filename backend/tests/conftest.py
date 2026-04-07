@@ -17,3 +17,12 @@ def client():
     """FastAPI test client shared across all tests in a module."""
     with TestClient(app) as c:
         yield c
+
+
+@pytest.fixture(autouse=True)
+def reset_rate_limiter():
+    """Clear in-memory rate-limit counters before every test so they don't bleed across tests."""
+    from routers.chat import reset_rate_limiter_for_testing
+    reset_rate_limiter_for_testing()
+    yield
+    reset_rate_limiter_for_testing()

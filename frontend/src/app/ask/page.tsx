@@ -1,4 +1,4 @@
-import AskQuranChat from "@/components/AskQuranChat";
+import ChatWithBoundary from "@/components/ChatWithBoundary";
 import Header from "@/components/Header";
 
 export const metadata = {
@@ -14,7 +14,7 @@ export default function AskPage() {
           <h1 className="text-3xl font-bold text-gray-800 mb-2">اسأل القرآن الكريم</h1>
           <p className="text-gray-500">اطرح سؤالك وسنجد لك الإرشاد القرآني المناسب</p>
         </div>
-        <AskQuranChat />
+        <ChatWithBoundary />
       </main>
     </div>
   );

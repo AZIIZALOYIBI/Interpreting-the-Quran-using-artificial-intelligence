@@ -1,6 +1,10 @@
+import logging
 import os
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List, Optional
+
 from data.sample_ayahs import SAMPLE_AYAHS
+
+logger = logging.getLogger(__name__)
 
 CATEGORY_KEYWORDS = {
     "medicine": ["طب", "صحة", "مرض", "علاج", "شفاء", "دواء", "صيام", "غذاء", "جسم"],
@@ -196,36 +200,76 @@ DEFAULT_RESPONSE = {
 
 
 def classify_question(question: str) -> str:
+    """Classify a question into one of the known categories using keyword matching.
+
+    Args:
+        question: The Arabic question text to classify.
+
+    Returns:
+        The category ID string (e.g. "medicine") or "general" when no match.
+    """
     question_lower = question.lower()
-    scores = {cat: 0 for cat in CATEGORY_KEYWORDS}
+    scores: Dict[str, int] = {cat: 0 for cat in CATEGORY_KEYWORDS}
     for category, keywords in CATEGORY_KEYWORDS.items():
         for kw in keywords:
             if kw in question_lower:
                 scores[category] += 1
-    best = max(scores, key=lambda k: scores[k])
+    best: str = max(scores, key=lambda k: scores[k])
     return best if scores[best] > 0 else "general"
 
 
-async def get_quran_solution(question: str, category: Optional[str] = None) -> Dict[str, Any]:
+async def get_quran_solution(
+    question: str, category: Optional[str] = None
+) -> Dict[str, Any]:
+    """Return a Quranic guidance response for the given question.
+
+    Tries OpenAI GPT-3.5-turbo when ``OPENAI_API_KEY`` is configured; falls
+    back to pre-built mock responses otherwise.
+
+    Args:
+        question: The user's question (5–2000 chars).
+        category: Optional category ID.  Auto-classified when omitted.
+
+    Returns:
+        A dict containing ``answer``, ``category``, ``ayahs``, and
+        ``practical_steps`` keys.
+    """
     if not category:
         category = classify_question(question)
+        logger.debug("Auto-classified question to category: %s", category)
 
     # Try OpenAI if key is available
     api_key = os.getenv("OPENAI_API_KEY", "").strip()
     if api_key:
         try:
+            logger.info("Using OpenAI for category: %s", category)
             return await _get_openai_solution(question, category, api_key)
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("OpenAI call failed, falling back to mock: %s", exc)
 
     # Fallback to mock response
+    logger.debug("Returning mock response for category: %s", category)
     response = MOCK_RESPONSES.get(category, DEFAULT_RESPONSE).copy()
     response["answer"] = f"بناءً على سؤالك: \"{question}\"\n\n" + response["answer"]
     return response
 
 
-async def _get_openai_solution(question: str, category: str, api_key: str) -> Dict[str, Any]:
+async def _get_openai_solution(
+    question: str, category: str, api_key: str
+) -> Dict[str, Any]:
+    """Fetch a Quranic guidance answer from OpenAI GPT-3.5-turbo.
+
+    Args:
+        question: The user's question.
+        category: The resolved category ID.
+        api_key: A valid OpenAI API key.
+
+    Returns:
+        Response dict with ``answer``, ``category``, ``ayahs``, and
+        ``practical_steps``.
+    """
     from openai import AsyncOpenAI
+
     client = AsyncOpenAI(api_key=api_key)
 
     system_prompt = f"""أنت مساعد قرآني متخصص يساعد المسلمين في إيجاد الإرشاد والتوجيه من القرآن الكريم.
