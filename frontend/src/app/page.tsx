@@ -19,10 +19,12 @@ const DAILY_VERSES = [
   { text: "يَا أَيَّتُهَا النَّفْسُ الْمُطْمَئِنَّةُ ۝ ارْجِعِي إِلَىٰ رَبِّكِ رَاضِيَةً مَّرْضِيَّةً", surah: "الفجر", ayah: "27-28" },
 ];
 
+const MS_PER_DAY = 86400000;
+
 function getDailyVerse() {
   const now = new Date();
   const startOfYear = new Date(now.getFullYear(), 0, 1);
-  const dayOfYear = Math.floor((now.getTime() - startOfYear.getTime()) / 86400000);
+  const dayOfYear = Math.floor((now.getTime() - startOfYear.getTime()) / MS_PER_DAY);
   return DAILY_VERSES[dayOfYear % DAILY_VERSES.length];
 }
 

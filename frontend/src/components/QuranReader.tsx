@@ -95,10 +95,11 @@ export default function QuranReader() {
   const [fontSize, setFontSize] = useState(1.5);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredSurahs = useMemo(
-    () => SURAHS.filter((s) => s.nameAr.includes(searchQuery.trim())),
-    [searchQuery]
-  );
+  const filteredSurahs = useMemo(() => {
+    const q = searchQuery.trim().replace(/[\u064B-\u065F]/g, "");
+    if (!q) return SURAHS;
+    return SURAHS.filter((s) => s.nameAr.replace(/[\u064B-\u065F]/g, "").includes(q));
+  }, [searchQuery]);
 
   const loadSurah = useCallback(async (surah: SurahInfo) => {
     setSelectedSurah(surah);
