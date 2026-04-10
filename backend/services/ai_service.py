@@ -2,6 +2,7 @@ import logging
 import os
 from typing import Any, Dict, List, Optional
 
+from config import settings
 from data.sample_ayahs import SAMPLE_AYAHS
 
 logger = logging.getLogger(__name__)
@@ -248,7 +249,7 @@ async def get_quran_solution(
             logger.warning("OpenAI call failed, falling back to GPTQ/mock: %s", exc)
 
     # Try local GPTQ model if configured
-    gptq_model_path = os.getenv("GPTQ_MODEL_PATH", "").strip()
+    gptq_model_path = settings.GPTQ_MODEL_PATH.strip()
     if gptq_model_path:
         try:
             logger.info("Using local GPTQ model '%s' for category: %s", gptq_model_path, category)
@@ -331,7 +332,6 @@ async def _get_gptq_solution(
     """
     import asyncio
     from services import gptq_service
-    from config import settings
 
     loop = asyncio.get_event_loop()
     answer = await loop.run_in_executor(

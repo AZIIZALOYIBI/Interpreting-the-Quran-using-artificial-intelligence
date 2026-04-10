@@ -135,7 +135,8 @@ def generate(
     )
 
     full_text: str = outputs[0]["generated_text"]
-    # Strip the prompt prefix to return only the generated answer
+    # Both `prompt` and `full_text` are Python str (Unicode) objects, so slicing
+    # by len(prompt) is character-accurate even for multi-codepoint Arabic text.
     if full_text.startswith(prompt):
         return full_text[len(prompt):].strip()
     return full_text.strip()
