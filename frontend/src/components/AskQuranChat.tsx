@@ -12,6 +12,8 @@ const QUICK_QUESTIONS = [
   { text: "ما موقف الإسلام من العدل والحقوق؟", category: "law" },
   { text: "كيف يأمر الإسلام بحماية البيئة؟", category: "environment" },
   { text: "كيف أقوى إيماني وعلاقتي بالله؟", category: "self_development" },
+  { text: "ما أذكار الصباح والمساء في القرآن؟", category: "general" },
+  { text: "كيف يعالج الإسلام الحزن والاكتئاب؟", category: "self_development" },
 ];
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -23,9 +25,40 @@ const CATEGORY_LABELS: Record<string, string> = {
   law: "القانون",
   environment: "البيئة",
   ethics: "الأخلاق والقيم",
+  azkar: "الأذكار",
   chat: "عام",
   general: "عام",
 };
+
+function CopyButton({ message }: { message: { content: string; ayahs?: { surahNameAr: string; ayahNumber: number; textUthmani: string }[] } }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    let text = message.content;
+    if (message.ayahs && message.ayahs.length > 0) {
+      text += "\n\n" + message.ayahs.map((a) => `${a.textUthmani}\n— ${a.surahNameAr}: ${a.ayahNumber}`).join("\n\n");
+    }
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      title="نسخ الرسالة"
+      className="absolute top-3 left-3 text-xs px-2 py-1 rounded-lg transition-all"
+      style={{
+        backgroundColor: copied ? "var(--claude-accent-light)" : "var(--claude-surface)",
+        color: copied ? "var(--claude-accent-hover)" : "var(--claude-text-muted)",
+        border: "1px solid var(--claude-border)",
+      }}
+    >
+      {copied ? "✓ تم النسخ" : "📋"}
+    </button>
+  );
+}
 
 function AyahCard({ ayah }: { ayah: Ayah }) {
   return (
@@ -213,7 +246,7 @@ export default function AskQuranChat() {
               className={`max-w-[85%] rounded-2xl ${
                 message.role === "user"
                   ? "rounded-tl-sm px-4 py-3"
-                  : "rounded-tr-sm p-4 w-full"
+                  : "rounded-tr-sm p-4 w-full relative"
               }`}
               style={
                 message.role === "user"
@@ -225,6 +258,10 @@ export default function AskQuranChat() {
                     }
               }
             >
+              {/* Copy button for assistant messages */}
+              {message.role === "assistant" && message.id !== "welcome" && (
+                <CopyButton message={message} />
+              )}
               {/* Category badge */}
               {message.category && (
                 <span
@@ -359,6 +396,7 @@ export default function AskQuranChat() {
             onChange={(e) => setInputText(e.target.value)}
             placeholder="اكتب سؤالك هنا..."
             disabled={loading}
+            maxLength={500}
             className="flex-1 rounded-xl px-4 py-3 text-right focus:outline-none transition-all"
             style={{
               border: "1.5px solid var(--claude-border)",
@@ -390,6 +428,14 @@ export default function AskQuranChat() {
             )}
           </button>
         </div>
+        {inputText.length > 0 && (
+          <p
+            className="text-xs mt-1 text-left"
+            style={{ color: inputText.length > 450 ? "var(--claude-accent-hover)" : "var(--claude-text-subtle)" }}
+          >
+            {inputText.length}/500
+          </p>
+        )}
       </form>
     </div>
   );

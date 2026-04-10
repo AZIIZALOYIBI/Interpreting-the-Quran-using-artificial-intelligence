@@ -3,7 +3,21 @@ import { useState } from "react";
 import ScientificMiracleCard from "@/components/ScientificMiracleCard";
 import type { ScientificMiracle } from "@/types";
 
-const ALL_CATEGORIES = ["الكل", "علم الفلك", "علم الأجنة", "علوم البحار", "علم الجيولوجيا", "علم الأحياء"];
+const ALL_CATEGORIES = [
+  "الكل",
+  "علم الفلك",
+  "علم الأجنة",
+  "علوم البحار",
+  "علم الجيولوجيا",
+  "علم الأحياء",
+  "علم الأرصاد",
+  "علم الفيزياء الفلكية",
+  "علم الفيزياء",
+  "علم الكيمياء الحيوية",
+  "علم البصريات",
+  "علم النبات",
+  "علم الأعصاب",
+];
 
 interface MiraclesFilterProps {
   miracles: ScientificMiracle[];
@@ -16,17 +30,22 @@ export default function MiraclesFilter({ miracles }: MiraclesFilterProps) {
     ? miracles
     : miracles.filter((m) => m.category === activeCategory);
 
+  const getCount = (cat: string) =>
+    cat === "الكل" ? miracles.length : miracles.filter((m) => m.category === cat).length;
+
   return (
     <>
       {/* Category filter */}
       <div className="flex flex-wrap gap-3 justify-center mb-10">
         {ALL_CATEGORIES.map((cat) => {
           const isActive = cat === activeCategory;
+          const count = getCount(cat);
+          if (count === 0) return null;
           return (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className="px-5 py-2 rounded-full text-sm font-medium transition-all"
+              className="px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2"
               style={
                 isActive
                   ? {
@@ -42,6 +61,15 @@ export default function MiraclesFilter({ miracles }: MiraclesFilterProps) {
               }
             >
               {cat}
+              <span
+                className="text-xs px-1.5 py-0.5 rounded-full font-semibold"
+                style={{
+                  backgroundColor: isActive ? "rgba(255,255,255,0.25)" : "var(--claude-surface-2)",
+                  color: isActive ? "white" : "var(--claude-text-muted)",
+                }}
+              >
+                {count}
+              </span>
             </button>
           );
         })}

@@ -1,5 +1,32 @@
+"use client";
 import Link from "next/link";
 import Header from "@/components/Header";
+
+const DAILY_VERSES = [
+  { text: "وَنَزَّلْنَا عَلَيْكَ الْكِتَابَ تِبْيَانًا لِّكُلِّ شَيْءٍ", surah: "النحل", ayah: 89 },
+  { text: "إِنَّ مَعَ الْعُسْرِ يُسْرًا", surah: "الشرح", ayah: 6 },
+  { text: "وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا", surah: "الطلاق", ayah: 2 },
+  { text: "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ۝ إِنَّ مَعَ الْعُسْرِ يُسْرًا", surah: "الشرح", ayah: "5-6" },
+  { text: "وَاللَّهُ يُحِبُّ الصَّابِرِينَ", surah: "آل عمران", ayah: 146 },
+  { text: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ", surah: "البقرة", ayah: 201 },
+  { text: "وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ", surah: "البقرة", ayah: 216 },
+  { text: "حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ", surah: "التوبة", ayah: 129 },
+  { text: "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ", surah: "الطلاق", ayah: 3 },
+  { text: "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", surah: "البقرة", ayah: 153 },
+  { text: "وَلَا تَيْأَسُوا مِن رَّوْحِ اللَّهِ ۖ إِنَّهُ لَا يَيْأَسُ مِن رَّوْحِ اللَّهِ إِلَّا الْقَوْمُ الْكَافِرُونَ", surah: "يوسف", ayah: 87 },
+  { text: "وَقُل رَّبِّ زِدْنِي عِلْمًا", surah: "طه", ayah: 114 },
+  { text: "وَاصْبِرْ وَمَا صَبْرُكَ إِلَّا بِاللَّهِ", surah: "النحل", ayah: 127 },
+  { text: "يَا أَيَّتُهَا النَّفْسُ الْمُطْمَئِنَّةُ ۝ ارْجِعِي إِلَىٰ رَبِّكِ رَاضِيَةً مَّرْضِيَّةً", surah: "الفجر", ayah: "27-28" },
+];
+
+const MS_PER_DAY = 86400000;
+
+function getDailyVerse() {
+  const now = new Date();
+  const startOfYear = new Date(now.getFullYear(), 0, 1);
+  const dayOfYear = Math.floor((now.getTime() - startOfYear.getTime()) / MS_PER_DAY);
+  return DAILY_VERSES[dayOfYear % DAILY_VERSES.length];
+}
 
 const CATEGORIES = [
   {
@@ -45,6 +72,18 @@ const CATEGORIES = [
     description: "الحفاظ على البيئة وعمارة الأرض في ضوء القرآن الكريم",
   },
   {
+    id: "ethics",
+    nameAr: "الأخلاق والقيم",
+    icon: "✨",
+    description: "منظومة الأخلاق الإسلامية والقيم الإنسانية الرفيعة",
+  },
+  {
+    id: "azkar",
+    nameAr: "الأذكار والأدعية",
+    icon: "🤲",
+    description: "أذكار الصباح والمساء والأدعية القرآنية المأثورة",
+  },
+  {
     id: "chat",
     nameAr: "اسأل القرآن",
     icon: "💬",
@@ -53,6 +92,8 @@ const CATEGORIES = [
 ];
 
 export default function HomePage() {
+  const dailyVerse = getDailyVerse();
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: "var(--claude-bg)" }}>
       <Header />
@@ -62,7 +103,20 @@ export default function HomePage() {
         className="py-20 px-4 relative overflow-hidden"
         style={{ backgroundColor: "var(--claude-dark)" }}
       >
-        {/* Subtle pattern overlay */}
+        {/* Islamic geometric SVG background decoration */}
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none" aria-hidden="true">
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="geo" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+                <polygon points="40,0 80,20 80,60 40,80 0,60 0,20" fill="none" stroke="white" strokeWidth="0.8"/>
+                <polygon points="40,10 70,25 70,55 40,70 10,55 10,25" fill="none" stroke="white" strokeWidth="0.4"/>
+                <circle cx="40" cy="40" r="8" fill="none" stroke="white" strokeWidth="0.4"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#geo)"/>
+          </svg>
+        </div>
+        {/* Subtle gradient overlay */}
         <div
           className="absolute inset-0 opacity-5"
           style={{
@@ -80,7 +134,7 @@ export default function HomePage() {
             }}
           >
             <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: "var(--claude-accent)" }}></span>
-            مدعوم بالذكاء الاصطناعي
+            مدعوم بالذكاء الاصطناعي · متاح 24/7
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
@@ -95,20 +149,26 @@ export default function HomePage() {
             من الطب إلى الأعمال إلى العلاقات الأسرية وما بينها
           </p>
 
-          {/* Quran verse card */}
+          {/* Verse of the Day card */}
           <div
-            className="rounded-2xl p-6 mb-10 max-w-2xl mx-auto"
+            className="rounded-2xl p-8 mb-10 max-w-2xl mx-auto"
             style={{
               backgroundColor: "rgba(245, 239, 230, 0.06)",
-              border: "1px solid rgba(232, 221, 209, 0.15)",
+              border: "1px solid rgba(232, 221, 209, 0.18)",
               backdropFilter: "blur(8px)",
             }}
           >
-            <p className="quran-font text-white text-2xl mb-3">
-              وَنَزَّلْنَا عَلَيْكَ الْكِتَابَ تِبْيَانًا لِّكُلِّ شَيْءٍ
+            <div
+              className="text-xs font-semibold uppercase tracking-wider mb-4 flex items-center justify-center gap-2"
+              style={{ color: "var(--claude-accent-muted)" }}
+            >
+              <span>✦</span> آية اليوم <span>✦</span>
+            </div>
+            <p className="quran-font text-white leading-relaxed mb-4" style={{ fontSize: "1.6rem" }}>
+              {dailyVerse.text}
             </p>
             <p className="text-sm" style={{ color: "var(--claude-text-subtle)" }}>
-              سورة النحل — الآية 89
+              سورة {dailyVerse.surah} — الآية {dailyVerse.ayah}
             </p>
           </div>
 
@@ -145,7 +205,7 @@ export default function HomePage() {
             {[
               { number: "6,236", label: "آية قرآنية", icon: "📜" },
               { number: "114", label: "سورة كريمة", icon: "📚" },
-              { number: "8", label: "مجالات حياتية", icon: "🎯" },
+              { number: "10", label: "مجالات حياتية", icon: "🎯" },
               { number: "∞", label: "إجابات قرآنية", icon: "✨" },
             ].map((stat, i) => (
               <div key={i} className="p-4">
@@ -187,7 +247,7 @@ export default function HomePage() {
             {CATEGORIES.map((cat) => (
               <Link
                 key={cat.id}
-                href={cat.id === "chat" ? "/ask" : `/categories/${cat.id}`}
+                href={cat.id === "chat" ? "/ask" : cat.id === "azkar" ? "/azkar" : `/categories/${cat.id}`}
                 className="category-card flex flex-col items-center text-center gap-4 group"
               >
                 <div
@@ -261,6 +321,52 @@ export default function HomePage() {
                 </h3>
                 <p className="text-sm" style={{ color: "var(--claude-text-muted)" }}>
                   {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features section */}
+      <section className="py-16 px-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div
+              className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4"
+              style={{
+                backgroundColor: "var(--claude-accent-light)",
+                color: "var(--claude-accent-hover)",
+              }}
+            >
+              مميزات المنصة
+            </div>
+            <h2 className="text-3xl font-bold" style={{ color: "var(--claude-text)" }}>
+              لماذا تختارنا؟
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { icon: "🌐", title: "متاح دائماً", desc: "يعمل 24/7 دون انقطاع مع إجابات فورية" },
+              { icon: "🔒", title: "آمن وموثوق", desc: "بيانات القرآن مأخوذة من مصادر موثوقة ومعتمدة" },
+              { icon: "📱", title: "متوافق مع الجوال", desc: "تجربة سلسة على جميع الأجهزة والشاشات" },
+            ].map((feat, i) => (
+              <div
+                key={i}
+                className="card text-center"
+                style={{ borderTop: "3px solid var(--claude-accent)" }}
+              >
+                <div
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4"
+                  style={{ backgroundColor: "var(--claude-accent-light)" }}
+                >
+                  {feat.icon}
+                </div>
+                <h3 className="text-lg font-bold mb-2" style={{ color: "var(--claude-text)" }}>
+                  {feat.title}
+                </h3>
+                <p className="text-sm" style={{ color: "var(--claude-text-muted)" }}>
+                  {feat.desc}
                 </p>
               </div>
             ))}

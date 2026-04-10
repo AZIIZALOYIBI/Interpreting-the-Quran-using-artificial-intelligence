@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import BackToTop from "@/components/BackToTop";
 
 export const metadata: Metadata = {
   title: "حلول الحياة من القرآن الكريم | بالذكاء الاصطناعي",
@@ -23,6 +24,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen" style={{ backgroundColor: "var(--claude-bg)", color: "var(--claude-text)" }}>
         {children}
+        <BackToTop />
       </body>
     </html>
   );
