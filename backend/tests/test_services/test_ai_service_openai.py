@@ -77,7 +77,7 @@ class TestOpenAIPath:
 
         with patch.dict(sys.modules, {"openai": mock_openai_module}):
             result = asyncio.run(_get_openai_solution(
-                "كيف يرشدنا القرآن في الصحة؟", "medicine", "fake-api-key"
+                "كيف يرشدنا القرآن في الصحة؟", "medicine", "fake-api-key", []
             ))
 
         assert result["category"] == "medicine"
@@ -108,7 +108,7 @@ class TestOpenAIPath:
 
         with patch.dict(sys.modules, {"openai": mock_openai_module}):
             result = asyncio.run(_get_openai_solution(
-                "سؤال اختبار", "general", "fake-api-key"
+                "سؤال اختبار", "general", "fake-api-key", []
             ))
 
         assert result["answer"] == ""
@@ -139,7 +139,7 @@ class TestOpenAIPath:
 
         with patch.dict(sys.modules, {"openai": mock_openai_module}):
             for cat in categories:
-                result = asyncio.run(_get_openai_solution("سؤال اختبار", cat, "fake-key"))
+                result = asyncio.run(_get_openai_solution("سؤال اختبار", cat, "fake-key", []))
                 assert result["category"] == cat
 
 
