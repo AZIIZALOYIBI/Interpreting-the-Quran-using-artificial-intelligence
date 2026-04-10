@@ -3,6 +3,7 @@
 """
 import io
 import pytest
+from unittest.mock import MagicMock, patch
 
 
 # Minimal valid PDF (1-page, text-free) used across multiple tests.
@@ -20,14 +21,26 @@ _MINIMAL_PDF = (
     b"startxref\n190\n%%EOF"
 )
 
+_MOCK_MARKDOWN = "# بسم الله الرحمن الرحيم\n\nمحتوى الملف المحوّل."
+
+
+def _mock_markitdown(text: str = _MOCK_MARKDOWN):
+    """Return a context manager that patches MarkItDown.convert."""
+    result = MagicMock()
+    result.text_content = text
+    md_instance = MagicMock()
+    md_instance.convert.return_value = result
+    return patch("routers.upload.MarkItDown", return_value=md_instance)
+
 
 class TestUploadPDF:
     def test_upload_valid_pdf(self, client):
         """ملف PDF صالح يجب أن يُرجع 200 مع حقل markdown."""
-        response = client.post(
-            "/api/upload-pdf",
-            files={"file": ("test.pdf", io.BytesIO(_MINIMAL_PDF), "application/pdf")},
-        )
+        with _mock_markitdown():
+            response = client.post(
+                "/api/upload-pdf",
+                files={"file": ("test.pdf", io.BytesIO(_MINIMAL_PDF), "application/pdf")},
+            )
         assert response.status_code == 200
         data = response.json()
         assert "markdown" in data
@@ -36,6 +49,7 @@ class TestUploadPDF:
         assert data["filename"] == "test.pdf"
         assert data["content_type"] == "application/pdf"
         assert isinstance(data["char_count"], int)
+        assert data["markdown"] == _MOCK_MARKDOWN
 
     def test_upload_wrong_content_type(self, client):
         """ملف غير PDF يجب أن يُرجع 415."""
@@ -69,11 +83,25 @@ class TestUploadPDF:
 
     def test_upload_response_schema(self, client):
         """التحقق من مطابقة مخطط الاستجابة الكامل."""
-        response = client.post(
-            "/api/upload-pdf",
-            files={"file": ("quran.pdf", io.BytesIO(_MINIMAL_PDF), "application/pdf")},
-        )
+        with _mock_markitdown():
+            response = client.post(
+                "/api/upload-pdf",
+                files={"file": ("quran.pdf", io.BytesIO(_MINIMAL_PDF), "application/pdf")},
+            )
         assert response.status_code == 200
         data = response.json()
         assert set(data.keys()) == {"filename", "content_type", "markdown", "char_count"}
         assert data["char_count"] == len(data["markdown"])
+
+    def test_upload_markitdown_error_returns_500(self, client):
+        """فشل markitdown يجب أن يُرجع 500."""
+        result = MagicMock()
+        result.text_content = ""
+        md_instance = MagicMock()
+        md_instance.convert.side_effect = Exception("conversion error")
+        with patch("routers.upload.MarkItDown", return_value=md_instance):
+            response = client.post(
+                "/api/upload-pdf",
+                files={"file": ("bad.pdf", io.BytesIO(_MINIMAL_PDF), "application/pdf")},
+            )
+        assert response.status_code == 500

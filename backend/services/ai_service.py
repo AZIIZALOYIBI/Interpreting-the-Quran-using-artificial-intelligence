@@ -245,7 +245,16 @@ async def get_quran_solution(
             logger.info("Using OpenAI for category: %s", category)
             return await _get_openai_solution(question, category, api_key)
         except Exception as exc:
-            logger.warning("OpenAI call failed, falling back to mock: %s", exc)
+            logger.warning("OpenAI call failed, falling back to GPTQ/mock: %s", exc)
+
+    # Try local GPTQ model if configured
+    gptq_model_path = os.getenv("GPTQ_MODEL_PATH", "").strip()
+    if gptq_model_path:
+        try:
+            logger.info("Using local GPTQ model '%s' for category: %s", gptq_model_path, category)
+            return await _get_gptq_solution(question, category, gptq_model_path)
+        except Exception as exc:
+            logger.warning("GPTQ call failed, falling back to mock: %s", exc)
 
     # Fallback to mock response
     logger.debug("Returning mock response for category: %s", category)
@@ -295,6 +304,45 @@ async def _get_openai_solution(
     )
 
     answer = completion.choices[0].message.content or ""
+    return {
+        "answer": answer,
+        "category": category,
+        "ayahs": SAMPLE_AYAHS.get(category, []),
+        "practical_steps": [],
+    }
+
+
+async def _get_gptq_solution(
+    question: str, category: str, model_path: str
+) -> Dict[str, Any]:
+    """Fetch a Quranic guidance answer from the local WizardCoder-GPTQ model.
+
+    Runs the blocking ``generate`` call in a thread-pool executor so it does
+    not block the async event loop.
+
+    Args:
+        question: The user's question.
+        category: The resolved category ID.
+        model_path: HuggingFace repo ID or local path to the GPTQ model.
+
+    Returns:
+        Response dict with ``answer``, ``category``, ``ayahs``, and
+        ``practical_steps``.
+    """
+    import asyncio
+    from services import gptq_service
+    from config import settings
+
+    loop = asyncio.get_event_loop()
+    answer = await loop.run_in_executor(
+        None,
+        lambda: gptq_service.generate(
+            query=question,
+            model_path=model_path,
+            use_triton=settings.GPTQ_USE_TRITON,
+        ),
+    )
+
     return {
         "answer": answer,
         "category": category,

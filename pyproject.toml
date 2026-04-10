@@ -59,6 +59,10 @@ pythonpath = ["backend"]
 asyncio_mode = "strict"
 
 [project.optional-dependencies]
+gpu = [
+    "auto-gptq>=0.7.1",
+    "transformers>=4.36.0",
+]
 test = [
     "pytest>=7.4.0",
     "pytest-cov>=4.1.0",
