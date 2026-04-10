@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import Link from "next/link";
 
 const CATEGORY_DATA: Record<string, {
@@ -161,13 +162,14 @@ export default async function CategoryPage({
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--claude-bg)" }}>
         <Header />
-        <main className="max-w-4xl mx-auto px-4 py-16 text-center">
+        <main className="flex-1 max-w-4xl mx-auto px-4 py-16 text-center">
           <div className="text-6xl mb-4">❓</div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">الصفحة غير موجودة</h1>
+          <h1 className="text-3xl font-bold mb-4" style={{ color: "var(--claude-text)" }}>الصفحة غير موجودة</h1>
           <Link href="/" className="btn-primary">العودة للرئيسية</Link>
         </main>
+        <Footer />
       </div>
     );
   }
@@ -175,35 +177,35 @@ export default async function CategoryPage({
   const colors = COLOR_CLASSES[data.color] || COLOR_CLASSES.emerald;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--claude-bg)" }}>
       <Header />
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="flex-1 max-w-4xl mx-auto px-4 py-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-          <Link href="/" className="hover:text-emerald-600">الرئيسية</Link>
+        <nav className="flex items-center gap-2 text-sm mb-6" style={{ color: "var(--claude-text-muted)" }}>
+          <Link href="/" className="transition-colors" style={{ color: "var(--claude-text-muted)" }}>الرئيسية</Link>
           <span>←</span>
-          <span className="text-gray-800">{data.nameAr}</span>
+          <span style={{ color: "var(--claude-text)" }}>{data.nameAr}</span>
         </nav>
 
         {/* Header */}
         <div className={`${colors.bg} border ${colors.border} rounded-2xl p-8 text-center mb-8`}>
           <div className="text-6xl mb-4">{data.icon}</div>
           <h1 className={`text-3xl font-bold ${colors.text} mb-3`}>{data.nameAr}</h1>
-          <p className="text-gray-600">{data.description}</p>
+          <p style={{ color: "var(--claude-text-secondary)" }}>{data.description}</p>
         </div>
 
         {/* Ayahs */}
         <div className="space-y-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800">آيات ذات صلة</h2>
+          <h2 className="text-2xl font-bold" style={{ color: "var(--claude-text)" }}>آيات ذات صلة</h2>
           {data.ayahs.map((ayah, i) => (
             <div key={i} className="card">
               <div className="ayah-card mb-4">
-                <p className="quran-font text-gray-800 mb-3">{ayah.text}</p>
-                <p className="text-amber-700 text-sm font-semibold text-left">{ayah.ref}</p>
+                <p className="quran-font mb-3" style={{ color: "var(--claude-text)" }}>{ayah.text}</p>
+                <p className="text-sm font-semibold text-left" style={{ color: "var(--claude-gold)" }}>{ayah.ref}</p>
               </div>
-              <div className="bg-emerald-50 rounded-lg p-4">
-                <p className="text-sm font-semibold text-emerald-700 mb-2">📝 التفسير:</p>
-                <p className="text-gray-700 leading-relaxed">{ayah.tafsir}</p>
+              <div className="rounded-xl p-4" style={{ backgroundColor: "var(--claude-surface)", border: "1px solid var(--claude-border)" }}>
+                <p className="text-sm font-semibold mb-2" style={{ color: "var(--claude-accent-hover)" }}>📝 التفسير:</p>
+                <p className="leading-relaxed" style={{ color: "var(--claude-text-secondary)" }}>{ayah.tafsir}</p>
               </div>
             </div>
           ))}
@@ -220,6 +222,7 @@ export default async function CategoryPage({
           </Link>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

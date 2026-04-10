@@ -109,6 +109,11 @@ body {
   transform: translateY(-2px);
 }
 
+/* ===== Surah list hover ===== */
+.surah-item:hover {
+  background-color: var(--claude-accent-light);
+}
+
 /* ===== Scrollbar ===== */
 ::-webkit-scrollbar {
   width: 6px;

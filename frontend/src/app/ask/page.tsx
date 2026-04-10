@@ -1,4 +1,5 @@
 import ChatWithBoundary from "@/components/ChatWithBoundary";
+import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
 export const metadata = {
@@ -7,15 +8,38 @@ export const metadata = {
 
 export default function AskPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--claude-bg)" }}>
       <Header />
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">اسأل القرآن الكريم</h1>
-          <p className="text-gray-500">اطرح سؤالك وسنجد لك الإرشاد القرآني المناسب</p>
+
+      {/* Page hero */}
+      <div
+        className="py-10 px-4 text-center"
+        style={{ backgroundColor: "var(--claude-dark)", borderBottom: "1px solid var(--claude-dark-3)" }}
+      >
+        <div
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-4"
+          style={{
+            backgroundColor: "rgba(217, 119, 87, 0.15)",
+            border: "1px solid rgba(217, 119, 87, 0.3)",
+            color: "var(--claude-accent-muted)",
+          }}
+        >
+          <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: "var(--claude-accent)" }} />
+          مساعد قرآني بالذكاء الاصطناعي
         </div>
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+          اسأل <span style={{ color: "var(--claude-accent)" }}>القرآن الكريم</span>
+        </h1>
+        <p className="text-base max-w-xl mx-auto" style={{ color: "var(--claude-text-muted)" }}>
+          اطرح سؤالك في أي موضوع وسنبحث لك عن الإرشاد والتوجيه القرآني المناسب
+        </p>
+      </div>
+
+      <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-8">
         <ChatWithBoundary />
       </main>
+
+      <Footer />
     </div>
   );
 }

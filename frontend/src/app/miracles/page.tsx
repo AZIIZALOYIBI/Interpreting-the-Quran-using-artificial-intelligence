@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
-import ScientificMiracleCard from "@/components/ScientificMiracleCard";
+import Footer from "@/components/Footer";
+import MiraclesFilter from "@/components/MiraclesFilter";
 import type { ScientificMiracle } from "@/types";
 
 export const metadata = {
@@ -69,52 +70,65 @@ const MIRACLES: ScientificMiracle[] = [
   },
 ];
 
-const CATEGORIES = ["الكل", "علم الفلك", "علم الأجنة", "علوم البحار", "علم الجيولوجيا", "علم الأحياء"];
-
 export default function MiraclesPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--claude-bg)" }}>
       <Header />
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Hero */}
-        <div className="text-center mb-12">
-          <div className="text-6xl mb-4">🔬</div>
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">الإعجاز العلمي في القرآن الكريم</h1>
-          <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+
+      {/* Page hero */}
+      <div
+        className="py-14 px-4 text-center relative overflow-hidden"
+        style={{ backgroundColor: "var(--claude-dark)" }}
+      >
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 30% 50%, var(--claude-accent) 0%, transparent 60%), radial-gradient(circle at 70% 20%, #8B5CF6 0%, transparent 50%)",
+          }}
+        />
+        <div className="relative">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-5"
+            style={{
+              backgroundColor: "rgba(217, 119, 87, 0.15)",
+              border: "1px solid rgba(217, 119, 87, 0.3)",
+              color: "var(--claude-accent-muted)",
+            }}
+          >
+            <span>🔬</span> إعجاز قرآني علمي
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            الإعجاز العلمي
+            <br />
+            <span style={{ color: "var(--claude-accent)" }}>في القرآن الكريم</span>
+          </h1>
+          <p className="text-base max-w-2xl mx-auto" style={{ color: "var(--claude-text-muted)" }}>
             اكتشف كيف أشارت آيات القرآن الكريم إلى حقائق علمية أثبتها العلم الحديث بعد قرون
           </p>
         </div>
+      </div>
 
-        {/* Category filter (static display) */}
-        <div className="flex flex-wrap gap-3 justify-center mb-8">
-          {CATEGORIES.map((cat) => (
-            <span
-              key={cat}
-              className={`px-4 py-2 rounded-full text-sm font-medium cursor-pointer transition-colors ${
-                cat === "الكل"
-                  ? "bg-emerald-600 text-white"
-                  : "bg-white text-gray-600 border border-gray-200 hover:border-emerald-300"
-              }`}
-            >
-              {cat}
-            </span>
-          ))}
-        </div>
-
-        {/* Miracles grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {MIRACLES.map((miracle) => (
-            <ScientificMiracleCard key={miracle.id} miracle={miracle} />
-          ))}
-        </div>
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-10">
+        {/* Interactive filter + grid (client component) */}
+        <MiraclesFilter miracles={MIRACLES} />
 
         {/* Disclaimer */}
-        <div className="mt-12 bg-amber-50 border border-amber-200 rounded-xl p-6 text-center">
-          <p className="text-amber-800 text-sm">
+        <div
+          className="mt-12 rounded-xl p-6 text-center"
+          style={{
+            backgroundColor: "var(--claude-gold-light)",
+            border: "1px solid var(--claude-gold-border)",
+          }}
+        >
+          <p className="text-sm" style={{ color: "var(--claude-gold)" }}>
             ⚠️ المعلومات المعروضة مستقاة من مصادر علمية وتفسيرية موثوقة. يُنصح بالرجوع إلى المصادر الأصلية للتعمق في الموضوع.
           </p>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }
+

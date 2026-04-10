@@ -54,23 +54,37 @@ export default function QuranReader() {
   return (
     <div className="flex flex-col lg:flex-row gap-6 min-h-screen">
       {/* Surah list */}
-      <aside className="lg:w-72 bg-white rounded-xl shadow-md overflow-hidden flex-shrink-0">
-        <div className="bg-emerald-800 text-white p-4">
-          <h2 className="font-bold text-lg">فهرس السور</h2>
+      <aside
+        className="lg:w-72 rounded-xl overflow-hidden flex-shrink-0"
+        style={{ backgroundColor: "white", border: "1px solid var(--claude-border)", boxShadow: "0 2px 8px rgba(28,25,23,0.06)" }}
+      >
+        <div
+          className="p-4"
+          style={{ backgroundColor: "var(--claude-dark)", borderBottom: "1px solid var(--claude-dark-3)" }}
+        >
+          <h2 className="font-bold text-lg text-white">فهرس السور</h2>
         </div>
         <div className="overflow-y-auto max-h-[calc(100vh-200px)]">
           {SURAHS.map((surah) => (
             <button
               key={surah.id}
               onClick={() => loadSurah(surah)}
-              className={`w-full text-right px-4 py-3 flex items-center justify-between hover:bg-emerald-50 transition-colors border-b border-gray-100 ${
-                selectedSurah.id === surah.id ? "bg-emerald-100 text-emerald-800 font-bold" : "text-gray-700"
-              }`}
+              className="surah-item w-full text-right px-4 py-3 flex items-center justify-between transition-colors"
+              style={{
+                borderBottom: "1px solid var(--claude-border-light)",
+                backgroundColor: selectedSurah.id === surah.id ? "var(--claude-accent-light)" : "transparent",
+                color: selectedSurah.id === surah.id ? "var(--claude-accent-hover)" : "var(--claude-text-secondary)",
+                fontWeight: selectedSurah.id === surah.id ? "bold" : "normal",
+              }}
             >
-              <span className="text-gray-400 text-sm ltr">{surah.id}</span>
+              <span className="text-sm ltr" style={{ color: "var(--claude-text-subtle)" }}>
+                {surah.id}
+              </span>
               <div className="text-right">
                 <div className="font-bold">{surah.nameAr}</div>
-                <div className="text-xs text-gray-500">{surah.ayahCount} آية</div>
+                <div className="text-xs" style={{ color: "var(--claude-text-muted)" }}>
+                  {surah.ayahCount} آية
+                </div>
               </div>
             </button>
           ))}
@@ -78,21 +92,34 @@ export default function QuranReader() {
       </aside>
 
       {/* Reader area */}
-      <main className="flex-1 bg-white rounded-xl shadow-md overflow-hidden">
+      <main
+        className="flex-1 rounded-xl overflow-hidden"
+        style={{ backgroundColor: "white", border: "1px solid var(--claude-border)", boxShadow: "0 2px 8px rgba(28,25,23,0.06)" }}
+      >
         {/* Surah header */}
-        <div className="bg-emerald-800 text-white p-6 text-center">
-          <h2 className="text-3xl font-bold mb-1">{selectedSurah.nameAr}</h2>
-          <p className="text-emerald-200 text-sm">{selectedSurah.ayahCount} آية</p>
-          <div className="flex items-center justify-center gap-4 mt-4">
+        <div
+          className="p-6 text-center"
+          style={{ backgroundColor: "var(--claude-dark)", borderBottom: "1px solid var(--claude-dark-3)" }}
+        >
+          <h2 className="text-3xl font-bold text-white mb-1">{selectedSurah.nameAr}</h2>
+          <p className="text-sm" style={{ color: "var(--claude-text-subtle)" }}>
+            {selectedSurah.ayahCount} آية
+          </p>
+          <div className="flex items-center justify-center gap-3 mt-4">
             <button
               onClick={() => setFontSize((f) => Math.min(f + 0.2, 2.5))}
-              className="bg-emerald-700 hover:bg-emerald-600 px-3 py-1 rounded text-sm"
+              className="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors text-white"
+              style={{ backgroundColor: "var(--claude-accent)" }}
             >
               أ+
             </button>
+            <span className="text-sm" style={{ color: "var(--claude-text-subtle)" }}>
+              حجم الخط
+            </span>
             <button
               onClick={() => setFontSize((f) => Math.max(f - 0.2, 1))}
-              className="bg-emerald-700 hover:bg-emerald-600 px-3 py-1 rounded text-sm"
+              className="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors text-white"
+              style={{ backgroundColor: "var(--claude-dark-3)" }}
             >
               أ-
             </button>
@@ -101,8 +128,8 @@ export default function QuranReader() {
 
         {/* Bismillah */}
         {selectedSurah.id !== 9 && (
-          <div className="text-center py-6 border-b border-amber-100">
-            <p className="quran-font text-emerald-800" style={{ fontSize: `${fontSize}rem` }}>
+          <div className="text-center py-6 border-b" style={{ borderColor: "var(--claude-gold-border)" }}>
+            <p className="quran-font" style={{ color: "var(--claude-gold)", fontSize: `${fontSize}rem` }}>
               بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ
             </p>
           </div>
@@ -112,25 +139,27 @@ export default function QuranReader() {
         <div className="p-6">
           {loading ? (
             <div className="flex items-center justify-center py-16">
-              <div className="animate-spin w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full"></div>
+              <div
+                className="animate-spin w-12 h-12 border-4 border-t-transparent rounded-full"
+                style={{ borderColor: "var(--claude-accent)", borderTopColor: "transparent" }}
+              />
             </div>
           ) : ayahs.length > 0 ? (
             <div className="space-y-4">
               {ayahs.map((ayah) => (
                 <div key={ayah.ayahNumber} className="ayah-card">
-                  <p
-                    className="quran-font text-gray-800 mb-3"
-                    style={{ fontSize: `${fontSize}rem` }}
-                  >
+                  <p className="quran-font mb-3" style={{ fontSize: `${fontSize}rem`, color: "var(--claude-text)" }}>
                     {ayah.textUthmani}
-                    <span className="text-amber-600 text-base mr-2">﴿{ayah.ayahNumber}﴾</span>
+                    <span className="text-base mr-2" style={{ color: "var(--claude-gold)" }}>
+                      ﴿{ayah.ayahNumber}﴾
+                    </span>
                   </p>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 text-gray-500">
-              <p className="text-xl mb-2">📖</p>
+            <div className="text-center py-16" style={{ color: "var(--claude-text-muted)" }}>
+              <p className="text-2xl mb-3">📖</p>
               <p>اختر سورة من القائمة لعرض آياتها</p>
             </div>
           )}
