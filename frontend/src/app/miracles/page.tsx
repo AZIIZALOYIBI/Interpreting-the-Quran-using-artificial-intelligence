@@ -1,9 +1,11 @@
-"use client";
-import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ScientificMiracleCard from "@/components/ScientificMiracleCard";
+import MiraclesFilter from "@/components/MiraclesFilter";
 import type { ScientificMiracle } from "@/types";
+
+export const metadata = {
+  title: "الإعجاز العلمي في القرآن الكريم",
+};
 
 const MIRACLES: ScientificMiracle[] = [
   {
@@ -68,15 +70,7 @@ const MIRACLES: ScientificMiracle[] = [
   },
 ];
 
-const ALL_CATEGORIES = ["الكل", "علم الفلك", "علم الأجنة", "علوم البحار", "علم الجيولوجيا", "علم الأحياء"];
-
 export default function MiraclesPage() {
-  const [activeCategory, setActiveCategory] = useState("الكل");
-
-  const filtered = activeCategory === "الكل"
-    ? MIRACLES
-    : MIRACLES.filter((m) => m.category === activeCategory);
-
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--claude-bg)" }}>
       <Header />
@@ -116,41 +110,8 @@ export default function MiraclesPage() {
       </div>
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-10">
-        {/* Category filter */}
-        <div className="flex flex-wrap gap-3 justify-center mb-10">
-          {ALL_CATEGORIES.map((cat) => {
-            const isActive = cat === activeCategory;
-            return (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className="px-5 py-2 rounded-full text-sm font-medium transition-all"
-                style={
-                  isActive
-                    ? {
-                        backgroundColor: "var(--claude-accent)",
-                        color: "white",
-                        boxShadow: "0 2px 8px rgba(217, 119, 87, 0.35)",
-                      }
-                    : {
-                        backgroundColor: "white",
-                        color: "var(--claude-text-secondary)",
-                        border: "1px solid var(--claude-border)",
-                      }
-                }
-              >
-                {cat}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Miracles grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filtered.map((miracle) => (
-            <ScientificMiracleCard key={miracle.id} miracle={miracle} />
-          ))}
-        </div>
+        {/* Interactive filter + grid (client component) */}
+        <MiraclesFilter miracles={MIRACLES} />
 
         {/* Disclaimer */}
         <div
@@ -170,3 +131,4 @@ export default function MiraclesPage() {
     </div>
   );
 }
+
