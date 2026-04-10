@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Offline fallback page — displayed by the service worker (or Next.js)
  * when the user has no network connection.
