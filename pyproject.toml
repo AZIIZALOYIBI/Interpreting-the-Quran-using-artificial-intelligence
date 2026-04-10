@@ -39,6 +39,7 @@ dependencies = [
     "tiktoken==0.5.2",
     "python-multipart==0.0.22",
     "aiohttp==3.13.3",
+    "markitdown[pdf]==0.1.5",
 ]
 
 [project.urls]
@@ -58,6 +59,10 @@ pythonpath = ["backend"]
 asyncio_mode = "strict"
 
 [project.optional-dependencies]
+gpu = [
+    "auto-gptq>=0.7.1",
+    "transformers>=4.36.0",
+]
 test = [
     "pytest>=7.4.0",
     "pytest-cov>=4.1.0",

@@ -9,6 +9,12 @@ class Settings(BaseSettings):
     PINECONE_API_KEY: str = ""
     PINECONE_ENV: str = ""
     CORS_ORIGINS: str = "http://localhost:3000"
+    # Local GPTQ model — set to a HuggingFace repo ID or absolute local path.
+    # Example: "TheBloke/WizardCoder-15B-1.0-GPTQ"
+    # Leave empty to skip local inference and use mock responses instead.
+    GPTQ_MODEL_PATH: str = ""
+    # Enable Triton kernels for faster GPTQ inference (requires triton package).
+    GPTQ_USE_TRITON: bool = False
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
