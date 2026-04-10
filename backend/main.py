@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from config import settings
-from routers import chat, miracles, quran, tafsir
+from routers import chat, miracles, quran, tafsir, upload
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +67,7 @@ app.include_router(quran.router)
 app.include_router(tafsir.router)
 app.include_router(chat.router)
 app.include_router(miracles.router)
+app.include_router(upload.router)
 
 
 # ---------------------------------------------------------------------------
