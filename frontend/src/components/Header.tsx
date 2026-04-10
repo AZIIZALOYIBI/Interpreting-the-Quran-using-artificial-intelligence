@@ -1,17 +1,25 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const navLinks = [
     { href: "/", label: "الرئيسية" },
     { href: "/ask", label: "اسأل القرآن" },
     { href: "/reader", label: "القرآن الكريم" },
     { href: "/miracles", label: "الإعجاز العلمي" },
+    { href: "/azkar", label: "الأذكار" },
     { href: "/categories/medicine", label: "التصنيفات" },
   ];
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
 
   return (
     <header
@@ -38,24 +46,34 @@ export default function Header() {
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-3 py-2 rounded-lg text-sm font-medium transition-colors"
-                style={{ color: "var(--claude-text-subtle)" }}
-                onMouseEnter={(e) => {
-                  (e.target as HTMLElement).style.color = "white";
-                  (e.target as HTMLElement).style.backgroundColor = "var(--claude-dark-3)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.target as HTMLElement).style.color = "var(--claude-text-subtle)";
-                  (e.target as HTMLElement).style.backgroundColor = "transparent";
-                }}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const active = isActive(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                  style={{
+                    color: active ? "var(--claude-accent)" : "var(--claude-text-subtle)",
+                    backgroundColor: active ? "var(--claude-dark-3)" : "transparent",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!active) {
+                      (e.target as HTMLElement).style.color = "white";
+                      (e.target as HTMLElement).style.backgroundColor = "var(--claude-dark-3)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!active) {
+                      (e.target as HTMLElement).style.color = "var(--claude-text-subtle)";
+                      (e.target as HTMLElement).style.backgroundColor = "transparent";
+                    }
+                  }}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Ask button */}
@@ -96,17 +114,23 @@ export default function Header() {
             className="md:hidden py-3 border-t"
             style={{ borderColor: "var(--claude-dark-3)" }}
           >
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block px-3 py-2.5 text-sm rounded-lg transition-colors"
-                style={{ color: "var(--claude-text-subtle)" }}
-                onClick={() => setMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const active = isActive(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block px-3 py-2.5 text-sm rounded-lg transition-colors"
+                  style={{
+                    color: active ? "var(--claude-accent)" : "var(--claude-text-subtle)",
+                    backgroundColor: active ? "var(--claude-dark-3)" : "transparent",
+                  }}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--claude-dark-3)" }}>
               <Link
                 href="/ask"
