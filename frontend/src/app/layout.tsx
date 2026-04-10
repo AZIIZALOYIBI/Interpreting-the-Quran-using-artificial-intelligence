@@ -21,7 +21,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-gray-50 text-gray-900 min-h-screen">
+      <body className="min-h-screen" style={{ backgroundColor: "var(--claude-bg)", color: "var(--claude-text)" }}>
         {children}
       </body>
     </html>

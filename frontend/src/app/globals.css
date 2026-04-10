@@ -1,14 +1,44 @@
 @import "tailwindcss";
 
+/* ===== Claude Color System ===== */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  /* Backgrounds */
+  --claude-bg: #FAF9F6;
+  --claude-surface: #F5EFE6;
+  --claude-surface-2: #EDE6D9;
+
+  /* Borders */
+  --claude-border: #E8DDD1;
+  --claude-border-light: #F0EAE0;
+
+  /* Accent - Terracotta Orange */
+  --claude-accent: #D97757;
+  --claude-accent-hover: #C6654A;
+  --claude-accent-light: #FDE8DC;
+  --claude-accent-muted: #F5C4AE;
+
+  /* Text */
+  --claude-text: #1C1917;
+  --claude-text-secondary: #57534E;
+  --claude-text-muted: #78716C;
+  --claude-text-subtle: #A8A29E;
+
+  /* Dark elements (header, sidebar) */
+  --claude-dark: #292524;
+  --claude-dark-2: #3C3936;
+  --claude-dark-3: #44403C;
+
+  /* Ayah / Islamic gold */
+  --claude-gold: #B45309;
+  --claude-gold-light: #FEF3C7;
+  --claude-gold-border: #FDE68A;
 }
 
 body {
   direction: rtl;
   font-family: 'Noto Naskh Arabic', 'Traditional Arabic', 'Arabic Typesetting', serif;
+  background-color: var(--claude-bg);
+  color: var(--claude-text);
 }
 
 .quran-font {
@@ -22,47 +52,77 @@ body {
   direction: ltr;
 }
 
+/* ===== Buttons ===== */
 .btn-primary {
-  background-color: #059669;
+  background-color: var(--claude-accent);
   color: white;
   font-weight: bold;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, box-shadow 0.2s;
   cursor: pointer;
 }
 
 .btn-primary:hover {
-  background-color: #047857;
+  background-color: var(--claude-accent-hover);
+  box-shadow: 0 4px 12px rgba(217, 119, 87, 0.35);
 }
 
+/* ===== Cards ===== */
 .card {
-  background-color: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  background-color: #FFFFFF;
+  border-radius: 0.875rem;
+  border: 1px solid var(--claude-border);
+  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.06);
   padding: 1.5rem;
+  transition: box-shadow 0.2s;
 }
 
+.card:hover {
+  box-shadow: 0 4px 16px rgba(28, 25, 23, 0.1);
+}
+
+/* ===== Ayah Cards ===== */
 .ayah-card {
-  background-color: #fffbeb;
-  border: 1px solid #fcd34d;
+  background-color: var(--claude-gold-light);
+  border: 1px solid var(--claude-gold-border);
+  border-right: 3px solid var(--claude-gold);
   border-radius: 0.75rem;
   padding: 1.5rem;
   margin: 1rem 0;
 }
 
+/* ===== Category Cards ===== */
 .category-card {
-  background-color: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  background-color: #FFFFFF;
+  border-radius: 0.875rem;
+  border: 1px solid var(--claude-border);
+  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.06);
   padding: 1.5rem;
   cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.3s;
+  transition: all 0.25s ease;
 }
 
 .category-card:hover {
-  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-  transform: scale(1.05);
-  border-color: #6ee7b7;
+  box-shadow: 0 8px 24px rgba(217, 119, 87, 0.18);
+  border-color: var(--claude-accent-muted);
+  transform: translateY(-2px);
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--claude-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--claude-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--claude-text-muted);
 }
