@@ -1,224 +1,45 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import MiraclesFilter from "@/components/MiraclesFilter";
-import type { ScientificMiracle } from "@/types";
+"use client";
 
-export const metadata = {
-  title: "الإعجاز العلمي في القرآن الكريم",
-};
+import { useState } from "react";
+import { motion } from "framer-motion";
+import MiracleCard from "@/components/MiracleCard";
+import { ScientificMiracle } from "@/types";
 
-const MIRACLES: ScientificMiracle[] = [
-  {
-    id: 1,
-    titleAr: "توسع الكون",
-    titleEn: "Expansion of the Universe",
-    ayah: "وَالسَّمَاءَ بَنَيْنَاهَا بِأَيْدٍ وَإِنَّا لَمُوسِعُونَ",
-    surahName: "سورة الذاريات",
-    ayahRef: "الذاريات: 47",
-    scientificFact: "اكتشف العلماء في القرن العشرين أن الكون يتوسع باستمرار، وهو ما أشارت إليه هذه الآية قبل 1400 عام.",
-    category: "علم الفلك",
-  },
-  {
-    id: 2,
-    titleAr: "مراحل تكوين الجنين",
-    titleEn: "Stages of Human Embryo Development",
-    ayah: "ثُمَّ خَلَقْنَا النُّطْفَةَ عَلَقَةً فَخَلَقْنَا الْعَلَقَةَ مُضْغَةً فَخَلَقْنَا الْمُضْغَةَ عِظَامًا",
-    surahName: "سورة المؤمنون",
-    ayahRef: "المؤمنون: 14",
-    scientificFact: "وصف القرآن مراحل تطور الجنين بدقة متناهية تتطابق مع ما توصل إليه علم الأجنة الحديث.",
-    category: "علم الأجنة",
-  },
-  {
-    id: 3,
-    titleAr: "الحاجز بين البحرين",
-    titleEn: "Barrier Between Two Seas",
-    ayah: "مَرَجَ الْبَحْرَيْنِ يَلْتَقِيَانِ ۝ بَيْنَهُمَا بَرْزَخٌ لَّا يَبْغِيَانِ",
-    surahName: "سورة الرحمن",
-    ayahRef: "الرحمن: 19-20",
-    scientificFact: "اكتشف العلماء وجود حواجز مائية تفصل بين البحار المختلطة مما يمنع اختلاط مياهها وملوحتها.",
-    category: "علوم البحار",
-  },
-  {
-    id: 4,
-    titleAr: "تكون الجبال كالأوتاد",
-    titleEn: "Mountains as Pegs",
-    ayah: "أَلَمْ نَجْعَلِ الْأَرْضَ مِهَادًا ۝ وَالْجِبَالَ أَوْتَادًا",
-    surahName: "سورة النبأ",
-    ayahRef: "النبأ: 6-7",
-    scientificFact: "أثبتت الدراسات الجيولوجية الحديثة أن الجبال لها جذور عميقة في الأرض كالأوتاد تثبت القشرة الأرضية.",
-    category: "علم الجيولوجيا",
-  },
-  {
-    id: 5,
-    titleAr: "الماء أساس كل حياة",
-    titleEn: "Water as Origin of Life",
-    ayah: "وَجَعَلْنَا مِنَ الْمَاءِ كُلَّ شَيْءٍ حَيٍّ ۖ أَفَلَا يُؤْمِنُونَ",
-    surahName: "سورة الأنبياء",
-    ayahRef: "الأنبياء: 30",
-    scientificFact: "أثبت علم الأحياء أن الماء هو الركيزة الأساسية لجميع أشكال الحياة على كوكب الأرض.",
-    category: "علم الأحياء",
-  },
-  {
-    id: 6,
-    titleAr: "دوران الأجرام السماوية",
-    titleEn: "Orbits of Celestial Bodies",
-    ayah: "وَكُلٌّ فِي فَلَكٍ يَسْبَحُونَ",
-    surahName: "سورة يس",
-    ayahRef: "يس: 40",
-    scientificFact: "أثبت علم الفلك الحديث أن الشمس والقمر وسائر الأجرام السماوية تسبح في مدارات محددة.",
-    category: "علم الفلك",
-  },
-  {
-    id: 7,
-    titleAr: "تكوين الغيوم والمطر",
-    titleEn: "Formation of Clouds and Rain",
-    ayah: "وَأَنزَلْنَا مِنَ السَّمَاءِ مَاءً بِقَدَرٍ",
-    surahName: "سورة المؤمنون",
-    ayahRef: "المؤمنون: 18",
-    scientificFact: "وصف القرآن دورة الماء في الطبيعة بدقة علمية قبل اكتشاف علم الأرصاد الجوي الحديث.",
-    category: "علم الأرصاد",
-  },
-  {
-    id: 8,
-    titleAr: "الحديد من الفضاء",
-    titleEn: "Iron Sent from Space",
-    ayah: "وَأَنزَلْنَا الْحَدِيدَ فِيهِ بَأْسٌ شَدِيدٌ وَمَنَافِعُ لِلنَّاسِ",
-    surahName: "سورة الحديد",
-    ayahRef: "الحديد: 25",
-    scientificFact: "أثبت العلماء أن عنصر الحديد لم ينشأ على الأرض بل جاء من الفضاء الخارجي عبر النيازك.",
-    category: "علم الفيزياء الفلكية",
-  },
-  {
-    id: 9,
-    titleAr: "الحاجز بين الليل والنهار",
-    titleEn: "Day and Night Cycle",
-    ayah: "وَجَعَلَ اللَّيْلَ سَكَنًا وَالشَّمْسَ وَالْقَمَرَ حُسْبَانًا",
-    surahName: "سورة الأنعام",
-    ayahRef: "الأنعام: 96",
-    scientificFact: "دورة الليل والنهار الدقيقة التي تجعل الحياة ممكنة على الأرض.",
-    category: "علم الفلك",
-  },
-  {
-    id: 10,
-    titleAr: "خلق الإنسان من تراب",
-    titleEn: "Human Creation from Clay",
-    ayah: "وَلَقَدْ خَلَقْنَا الْإِنسَانَ مِن سُلَالَةٍ مِّن طِينٍ",
-    surahName: "سورة المؤمنون",
-    ayahRef: "المؤمنون: 12",
-    scientificFact: "أثبت العلم أن جسم الإنسان يحتوي على نفس العناصر الكيميائية الموجودة في التراب.",
-    category: "علم الكيمياء الحيوية",
-  },
-  {
-    id: 11,
-    titleAr: "الجاذبية والسماء المحفوظة",
-    titleEn: "The Protected Sky",
-    ayah: "وَجَعَلْنَا السَّمَاءَ سَقْفًا مَّحْفُوظًا",
-    surahName: "سورة الأنبياء",
-    ayahRef: "الأنبياء: 32",
-    scientificFact: "الغلاف الجوي والمجال المغناطيسي يحميان الأرض من الأشعة الكونية والنيازك.",
-    category: "علم الفيزياء",
-  },
-  {
-    id: 12,
-    titleAr: "الضوء والظلام",
-    titleEn: "Light and Darkness",
-    ayah: "وَجَعَلَ الظُّلُمَاتِ وَالنُّورَ",
-    surahName: "سورة الأنعام",
-    ayahRef: "الأنعام: 1",
-    scientificFact: "اكتشف العلم أن الظلام هو غياب الضوء وليس شيئاً مستقلاً كما أشارت إليه الآية.",
-    category: "علم البصريات",
-  },
-  {
-    id: 13,
-    titleAr: "تكوين الجبال",
-    titleEn: "Mountain Formation",
-    ayah: "وَأَلْقَىٰ فِي الْأَرْضِ رَوَاسِيَ أَن تَمِيدَ بِكُمْ",
-    surahName: "سورة النحل",
-    ayahRef: "النحل: 15",
-    scientificFact: "أثبت العلم أن الجبال تعمل كأوتاد تثبت القشرة الأرضية وتمنع اهتزاز الأرض.",
-    category: "علم الجيولوجيا",
-  },
-  {
-    id: 14,
-    titleAr: "التخصيب بالرياح",
-    titleEn: "Wind Pollination",
-    ayah: "وَأَرْسَلْنَا الرِّيَاحَ لَوَاقِحَ",
-    surahName: "سورة الحجر",
-    ayahRef: "الحجر: 22",
-    scientificFact: "اكتشف العلماء أن الرياح تلعب دوراً محورياً في تلقيح النباتات.",
-    category: "علم النبات",
-  },
-  {
-    id: 15,
-    titleAr: "النوم كموت صغير",
-    titleEn: "Sleep as Minor Death",
-    ayah: "اللَّهُ يَتَوَفَّى الْأَنفُسَ حِينَ مَوْتِهَا وَالَّتِي لَمْ تَمُتْ فِي مَنَامِهَا",
-    surahName: "سورة الزمر",
-    ayahRef: "الزمر: 42",
-    scientificFact: "أثبت علم الأعصاب أن أثناء النوم العميق تنخفض وظائف الجسم الحيوية بشكل مشابه للموت.",
-    category: "علم الأعصاب",
-  },
+const defaultMiracles: ScientificMiracle[] = [
+  { id: 1, title: "توسع الكون", description: "أثبت العلم الحديث أن الكون في توسع مستمر، وهو ما أشار إليه القرآن الكريم قبل أكثر من 1400 عام", scientific_fact: "اكتشف إدوين هابل عام 1929 أن المجرات تبتعد عن بعضها البعض، مما يعني أن الكون يتوسع باستمرار", quran_reference: "سورة الذاريات - الآية 47", verse_text: "وَالسَّمَاءَ بَنَيْنَاهَا بِأَيْدٍ وَإِنَّا لَمُوسِعُونَ", surah_name: "الذاريات", ayah_number: 47, category: "علم الفلك", discovery_year: "1929" },
+  { id: 2, title: "مراحل تكون الجنين", description: "وصف القرآن الكريم مراحل تطور الجنين بدقة علمية مذهلة قبل اكتشاف المجهر والتقنيات الحديثة", scientific_fact: "أكد علم الأجنة الحديث أن الجنين يمر بمراحل متعددة تطابق الوصف القرآني: النطفة، العلقة، المضغة", quran_reference: "سورة المؤمنون - الآيات 12-14", verse_text: "وَلَقَدْ خَلَقْنَا الْإِنسَانَ مِن سُلَالَةٍ مِّن طِينٍ ● ثُمَّ جَعَلْنَاهُ نُطْفَةً فِي قَرَارٍ مَّكِينٍ", surah_name: "المؤمنون", ayah_number: 12, category: "علم الأجنة", discovery_year: "القرن العشرين" },
+  { id: 3, title: "الحاجز بين البحرين", description: "أشار القرآن إلى وجود حاجز بين البحار المالحة والعذبة يمنع اختلاطهما", scientific_fact: "اكتشف علماء المحيطات أن هناك حاجزاً طبيعياً بين المياه العذبة والمالحة يحافظ على خصائص كل منهما", quran_reference: "سورة الرحمن - الآيات 19-20", verse_text: "مَرَجَ الْبَحْرَيْنِ يَلْتَقِيَانِ ● بَيْنَهُمَا بَرْزَخٌ لَّا يَبْغِيَانِ", surah_name: "الرحمن", ayah_number: 19, category: "علم المحيطات", discovery_year: "القرن العشرين" },
+  { id: 4, title: "الجبال كالأوتاد", description: "وصف القرآن الجبال بأنها أوتاد، وهو ما يتطابق مع الاكتشاف الجيولوجي الحديث", scientific_fact: "أثبتت الجيولوجيا الحديثة أن الجبال لها جذور عميقة تمتد في باطن الأرض وتعمل كأوتاد لتثبيت القشرة الأرضية", quran_reference: "سورة النبأ - الآيات 6-7", verse_text: "أَلَمْ نَجْعَلِ الْأَرْضَ مِهَادًا ● وَالْجِبَالَ أَوْتَادًا", surah_name: "النبأ", ayah_number: 6, category: "علم الجيولوجيا", discovery_year: "القرن التاسع عشر" },
+  { id: 5, title: "دورة الماء في الطبيعة", description: "وصف القرآن دورة الماء في الطبيعة بدقة", scientific_fact: "لم تُفهم دورة الماء بشكل كامل في العالم الغربي حتى القرن السابع عشر", quran_reference: "سورة الزمر - الآية 21", verse_text: "أَلَمْ تَرَ أَنَّ اللَّهَ أَنزَلَ مِنَ السَّمَاءِ مَاءً فَسَلَكَهُ يَنَابِيعَ فِي الْأَرْضِ", surah_name: "الزمر", ayah_number: 21, category: "علم المياه", discovery_year: "القرن السابع عشر" },
+  { id: 6, title: "بصمات الأصابع الفريدة", description: "أشار القرآن إلى قدرة الله على إعادة تكوين أطراف أصابع الإنسان بدقتها الفريدة", scientific_fact: "لم تُكتشف بصمات الأصابع كوسيلة تعريف فريدة حتى عام 1880 على يد هنري فولدز", quran_reference: "سورة القيامة - الآيات 3-4", verse_text: "أَيَحْسَبُ الْإِنسَانُ أَلَّن نَّجْمَعَ عِظَامَهُ ● بَلَىٰ قَادِرِينَ عَلَىٰ أَن نُّسَوِّيَ بَنَانَهُ", surah_name: "القيامة", ayah_number: 3, category: "علم الطب الشرعي", discovery_year: "1880" },
 ];
 
-export default function MiraclesPage() {
-  return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--claude-bg)" }}>
-      <Header />
+const miracleCategories = ["الكل", "علم الفلك", "علم الأجنة", "علم المحيطات", "علم الجيولوجيا", "علم المياه", "علم الطب الشرعي"];
 
-      {/* Page hero */}
-      <div
-        className="py-14 px-4 text-center relative overflow-hidden"
-        style={{ backgroundColor: "var(--claude-dark)" }}
-      >
-        <div
-          className="absolute inset-0 opacity-5"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 30% 50%, var(--claude-accent) 0%, transparent 60%), radial-gradient(circle at 70% 20%, #8B5CF6 0%, transparent 50%)",
-          }}
-        />
-        <div className="relative">
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-5"
-            style={{
-              backgroundColor: "rgba(217, 119, 87, 0.15)",
-              border: "1px solid rgba(217, 119, 87, 0.3)",
-              color: "var(--claude-accent-muted)",
-            }}
-          >
-            <span>🔬</span> إعجاز قرآني علمي
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            الإعجاز العلمي
-            <br />
-            <span style={{ color: "var(--claude-accent)" }}>في القرآن الكريم</span>
-          </h1>
-          <p className="text-base max-w-2xl mx-auto" style={{ color: "var(--claude-text-muted)" }}>
-            اكتشف كيف أشارت آيات القرآن الكريم إلى حقائق علمية أثبتها العلم الحديث بعد قرون
-          </p>
+export default function MiraclesPage() {
+  const [selectedCategory, setSelectedCategory] = useState("الكل");
+  const filteredMiracles = selectedCategory === "الكل" ? defaultMiracles : defaultMiracles.filter((m) => m.category === selectedCategory);
+
+  return (
+    <div className="min-h-screen pt-24 pb-16 px-4">
+      <div className="max-w-7xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
+          <h1 className="text-3xl sm:text-4xl font-bold font-display gradient-text mb-4">🔬 المعجزات العلمية في القرآن الكريم</h1>
+          <p className="text-gray-400 max-w-2xl mx-auto font-display">اكتشف الحقائق العلمية المذكورة في القرآن الكريم قبل أن يكتشفها العلم الحديث بقرون</p>
+          <div className="mt-4 h-1 w-24 mx-auto bg-gradient-to-l from-quran-gold to-yellow-600 rounded-full" />
+        </motion.div>
+        <div className="flex flex-wrap justify-center gap-3 mb-10">
+          {miracleCategories.map((cat) => (
+            <button key={cat} onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-full text-sm font-display font-medium transition-all ${selectedCategory === cat ? "bg-quran-gold/20 text-quran-gold border border-quran-gold/30" : "glass border border-white/5 text-gray-400 hover:text-white"}`}>
+              {cat}
+            </button>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredMiracles.map((miracle, i) => (<MiracleCard key={miracle.id} miracle={miracle} index={i} />))}
         </div>
       </div>
-
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-10">
-        {/* Interactive filter + grid (client component) */}
-        <MiraclesFilter miracles={MIRACLES} />
-
-        {/* Disclaimer */}
-        <div
-          className="mt-12 rounded-xl p-6 text-center"
-          style={{
-            backgroundColor: "var(--claude-gold-light)",
-            border: "1px solid var(--claude-gold-border)",
-          }}
-        >
-          <p className="text-sm" style={{ color: "var(--claude-gold)" }}>
-            ⚠️ المعلومات المعروضة مستقاة من مصادر علمية وتفسيرية موثوقة. يُنصح بالرجوع إلى المصادر الأصلية للتعمق في الموضوع.
-          </p>
-        </div>
-      </main>
-
-      <Footer />
     </div>
   );
 }
-

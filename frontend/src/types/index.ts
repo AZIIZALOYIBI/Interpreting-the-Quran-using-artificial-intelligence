@@ -1,84 +1,77 @@
-export interface Message {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  ayahs?: Ayah[];
-  category?: string;
-  practicalSteps?: string[];
-  timestamp: Date;
-}
-
-export interface Ayah {
+export interface QuranVerse {
   id: number;
-  surahId: number;
-  surahName: string;
-  surahNameAr: string;
-  ayahNumber: number;
-  textUthmani: string;
-  textSimple: string;
+  surah_number: number;
+  surah_name: string;
+  surah_name_en: string;
+  ayah_number: number;
+  text_uthmani: string;
+  text_simple: string;
   translation?: string;
-  tafsir?: string;
-  relevanceScore?: number;
-}
-
-export interface Tafsir {
-  id: number;
-  ayahId: number;
-  scholarName: string;
-  scholarNameAr: string;
-  text: string;
-  source: string;
+  juz_number: number;
+  hizb_number: number;
+  page_number: number;
 }
 
 export interface Category {
   id: string;
-  nameAr: string;
-  nameEn: string;
+  name: string;
+  name_en: string;
   icon: string;
   description: string;
   color: string;
-  bgColor: string;
-  textColor: string;
+  verse_count: number;
+}
+
+export interface AskQuranRequest {
+  question: string;
+  category?: string;
+}
+
+export interface AskQuranResponse {
+  answer: string;
+  verses: QuranVerse[];
+  category: string;
+  confidence: number;
+  related_topics: string[];
+  tafsir_notes: string[];
 }
 
 export interface ScientificMiracle {
   id: number;
-  titleAr: string;
-  titleEn: string;
-  ayah: string;
-  surahName: string;
-  ayahRef: string;
-  scientificFact: string;
+  title: string;
+  description: string;
+  scientific_fact: string;
+  quran_reference: string;
+  verse_text: string;
+  surah_name: string;
+  ayah_number: number;
   category: string;
+  discovery_year?: string;
+  image_url?: string;
 }
 
-export interface QuranSolution {
-  question: string;
-  category: string;
-  answer: string;
-  ayahs: Ayah[];
-  practicalSteps: string[];
-  additionalContext?: string;
-}
-
-export interface ChatRequest {
-  question: string;
-  category?: string;
-  language?: "ar" | "en";
-}
-
-export interface ChatResponse {
-  answer: string;
-  category: string;
-  ayahs: Ayah[];
-  practicalSteps: string[];
-  disclaimer: string;
-}
-
-export interface SurahInfo {
+export interface TafsirEntry {
   id: number;
-  nameAr: string;
-  nameEn: string;
-  ayahCount: number;
-  revelationType: "meccan" | "medinan";
+  verse_id: number;
+  scholar_name: string;
+  scholar_name_en: string;
+  tafsir_text: string;
+  source: string;
+  era: string;
+}
+
+export interface SearchResult {
+  verses: QuranVerse[];
+  total_count: number;
+  query: string;
+  suggestions: string[];
+}
+
+export interface Surah {
+  number: number;
+  name: string;
+  name_en: string;
+  name_translation: string;
+  revelation_type: string;
+  ayah_count: number;
 }
