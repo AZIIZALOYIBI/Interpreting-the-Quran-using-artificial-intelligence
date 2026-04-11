@@ -1,14 +1,15 @@
+"""Tafsir Router — Endpoints for Quran interpretations."""
+
 from fastapi import APIRouter
-from services import tafsir_service
+from data.tafsir_data import TAFSIR_DATA
 
-router = APIRouter(prefix="/api/tafsir", tags=["tafsir"])
-
-
-@router.get("/scholars")
-def get_scholars():
-    return tafsir_service.get_available_scholars()
+router = APIRouter()
 
 
-@router.get("/{ayah_id}")
-def get_tafsir(ayah_id: int, scholar: str = "all"):
-    return tafsir_service.get_tafsir(ayah_id, scholar)
+@router.get("/tafsir/{surah_number}/{ayah_number}")
+async def get_tafsir(surah_number: int, ayah_number: int):
+    key = f"{surah_number}:{ayah_number}"
+    tafsirs = TAFSIR_DATA.get(key, [])
+    if not tafsirs:
+        return TAFSIR_DATA.get("default", [])
+    return tafsirs

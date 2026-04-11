@@ -1,426 +1,72 @@
 "use client";
-import Link from "next/link";
-import Header from "@/components/Header";
 
-const DAILY_VERSES = [
-  { text: "وَنَزَّلْنَا عَلَيْكَ الْكِتَابَ تِبْيَانًا لِّكُلِّ شَيْءٍ", surah: "النحل", ayah: 89 },
-  { text: "إِنَّ مَعَ الْعُسْرِ يُسْرًا", surah: "الشرح", ayah: 6 },
-  { text: "وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا", surah: "الطلاق", ayah: 2 },
-  { text: "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ۝ إِنَّ مَعَ الْعُسْرِ يُسْرًا", surah: "الشرح", ayah: "5-6" },
-  { text: "وَاللَّهُ يُحِبُّ الصَّابِرِينَ", surah: "آل عمران", ayah: 146 },
-  { text: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ", surah: "البقرة", ayah: 201 },
-  { text: "وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ", surah: "البقرة", ayah: 216 },
-  { text: "حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ", surah: "التوبة", ayah: 129 },
-  { text: "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ", surah: "الطلاق", ayah: 3 },
-  { text: "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", surah: "البقرة", ayah: 153 },
-  { text: "وَلَا تَيْأَسُوا مِن رَّوْحِ اللَّهِ ۖ إِنَّهُ لَا يَيْأَسُ مِن رَّوْحِ اللَّهِ إِلَّا الْقَوْمُ الْكَافِرُونَ", surah: "يوسف", ayah: 87 },
-  { text: "وَقُل رَّبِّ زِدْنِي عِلْمًا", surah: "طه", ayah: 114 },
-  { text: "وَاصْبِرْ وَمَا صَبْرُكَ إِلَّا بِاللَّهِ", surah: "النحل", ayah: 127 },
-  { text: "يَا أَيَّتُهَا النَّفْسُ الْمُطْمَئِنَّةُ ۝ ارْجِعِي إِلَىٰ رَبِّكِ رَاضِيَةً مَّرْضِيَّةً", surah: "الفجر", ayah: "27-28" },
-];
+import { useState } from "react";
+import { motion } from "framer-motion";
+import HeroSection from "@/components/HeroSection";
+import CategoryCard from "@/components/CategoryCard";
+import { Category } from "@/types";
 
-const MS_PER_DAY = 86400000;
-
-function getDailyVerse() {
-  const now = new Date();
-  const startOfYear = new Date(now.getFullYear(), 0, 1);
-  const dayOfYear = Math.floor((now.getTime() - startOfYear.getTime()) / MS_PER_DAY);
-  return DAILY_VERSES[dayOfYear % DAILY_VERSES.length];
-}
-
-const CATEGORIES = [
-  {
-    id: "medicine",
-    nameAr: "الطب والصحة",
-    icon: "🏥",
-    description: "الإرشاد القرآني في الصحة والعلاج والوقاية من الأمراض",
-  },
-  {
-    id: "work",
-    nameAr: "العمل والمال",
-    icon: "💼",
-    description: "التوجيه الإلهي في الرزق والكسب الحلال وإدارة المال",
-  },
-  {
-    id: "science",
-    nameAr: "العلوم والتكنولوجيا",
-    icon: "🔬",
-    description: "الإعجاز العلمي في القرآن والحث على البحث والاكتشاف",
-  },
-  {
-    id: "family",
-    nameAr: "الأسرة والمجتمع",
-    icon: "👨‍👩‍👧‍👦",
-    description: "منظومة الأسرة في الإسلام والعلاقات الاجتماعية السليمة",
-  },
-  {
-    id: "self_development",
-    nameAr: "التطوير الذاتي",
-    icon: "🧠",
-    description: "بناء الشخصية المتكاملة وتحقيق النمو الروحي والعقلي",
-  },
-  {
-    id: "law",
-    nameAr: "القانون والعدالة",
-    icon: "⚖️",
-    description: "منظومة العدل والحقوق والواجبات في الشريعة الإسلامية",
-  },
-  {
-    id: "environment",
-    nameAr: "البيئة والطبيعة",
-    icon: "🌍",
-    description: "الحفاظ على البيئة وعمارة الأرض في ضوء القرآن الكريم",
-  },
-  {
-    id: "ethics",
-    nameAr: "الأخلاق والقيم",
-    icon: "✨",
-    description: "منظومة الأخلاق الإسلامية والقيم الإنسانية الرفيعة",
-  },
-  {
-    id: "azkar",
-    nameAr: "الأذكار والأدعية",
-    icon: "🤲",
-    description: "أذكار الصباح والمساء والأدعية القرآنية المأثورة",
-  },
-  {
-    id: "chat",
-    nameAr: "اسأل القرآن",
-    icon: "💬",
-    description: "تحدث مباشرة مع مساعدنا الذكي للحصول على إرشاد قرآني فوري",
-  },
+const defaultCategories: Category[] = [
+  { id: "medicine", name: "الطب والصحة", name_en: "Medicine & Health", icon: "🏥", description: "اكتشف الإرشادات القرآنية المتعلقة بالصحة الجسدية والنفسية والغذاء والعلاج", color: "#22c55e", verse_count: 120 },
+  { id: "business", name: "العمل والتجارة", name_en: "Business & Commerce", icon: "💼", description: "تعرف على مبادئ التجارة والعمل والمعاملات المالية في القرآن الكريم", color: "#3b82f6", verse_count: 95 },
+  { id: "science", name: "العلوم والمعرفة", name_en: "Science & Knowledge", icon: "🔬", description: "اكتشف الآيات المتعلقة بالعلوم الطبيعية والكونية والمعجزات العلمية", color: "#8b5cf6", verse_count: 150 },
+  { id: "family", name: "الأسرة والمجتمع", name_en: "Family & Society", icon: "👨‍👩‍👧‍👦", description: "إرشادات قرآنية حول بناء الأسرة والعلاقات الزوجية وتربية الأبناء", color: "#f59e0b", verse_count: 200 },
+  { id: "self-development", name: "تطوير الذات", name_en: "Self Development", icon: "🌱", description: "آيات تساعدك في تطوير شخصيتك وتحقيق التوازن النفسي والروحي", color: "#10b981", verse_count: 180 },
+  { id: "law", name: "القانون والعدل", name_en: "Law & Justice", icon: "⚖️", description: "مبادئ العدل والمساواة والحقوق والواجبات كما وردت في القرآن الكريم", color: "#ef4444", verse_count: 130 },
+  { id: "environment", name: "البيئة والطبيعة", name_en: "Environment & Nature", icon: "🌍", description: "آيات تتحدث عن البيئة والطبيعة والحفاظ على الأرض والموارد الطبيعية", color: "#06b6d4", verse_count: 85 },
+  { id: "general", name: "مواضيع عامة", name_en: "General Topics", icon: "🌐", description: "استكشف أي موضوع آخر في حياتك واحصل على إرشاد قرآني شامل", color: "#d4a843", verse_count: 500 },
 ];
 
 export default function HomePage() {
-  const dailyVerse = getDailyVerse();
+  const [categories] = useState<Category[]>(defaultCategories);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "var(--claude-bg)" }}>
-      <Header />
-
-      {/* Hero section */}
-      <section
-        className="py-20 px-4 relative overflow-hidden"
-        style={{ backgroundColor: "var(--claude-dark)" }}
-      >
-        {/* Islamic geometric SVG background decoration */}
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none" aria-hidden="true">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="geo" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-                <polygon points="40,0 80,20 80,60 40,80 0,60 0,20" fill="none" stroke="white" strokeWidth="0.8"/>
-                <polygon points="40,10 70,25 70,55 40,70 10,55 10,25" fill="none" stroke="white" strokeWidth="0.4"/>
-                <circle cx="40" cy="40" r="8" fill="none" stroke="white" strokeWidth="0.4"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#geo)"/>
-          </svg>
-        </div>
-        {/* Subtle gradient overlay */}
-        <div
-          className="absolute inset-0 opacity-5"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 25% 50%, var(--claude-accent) 0%, transparent 50%), radial-gradient(circle at 75% 20%, #8B5CF6 0%, transparent 50%)",
-          }}
-        />
-        <div className="max-w-4xl mx-auto text-center relative">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-8"
-            style={{
-              backgroundColor: "rgba(217, 119, 87, 0.15)",
-              border: "1px solid rgba(217, 119, 87, 0.3)",
-              color: "var(--claude-accent-muted)",
-            }}
-          >
-            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: "var(--claude-accent)" }}></span>
-            مدعوم بالذكاء الاصطناعي · متاح 24/7
-          </div>
-
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
-            حلول الحياة
-            <br />
-            <span style={{ color: "var(--claude-accent)" }}>من القرآن الكريم</span>
-          </h1>
-          <p className="text-lg md:text-xl mb-10 leading-relaxed max-w-2xl mx-auto"
-            style={{ color: "var(--claude-text-muted)" }}
-          >
-            منصة ذكية تساعدك في إيجاد الإرشاد والتوجيه القرآني لأي موضوع في حياتك،
-            من الطب إلى الأعمال إلى العلاقات الأسرية وما بينها
-          </p>
-
-          {/* Verse of the Day card */}
-          <div
-            className="rounded-2xl p-8 mb-10 max-w-2xl mx-auto"
-            style={{
-              backgroundColor: "rgba(245, 239, 230, 0.06)",
-              border: "1px solid rgba(232, 221, 209, 0.18)",
-              backdropFilter: "blur(8px)",
-            }}
-          >
-            <div
-              className="text-xs font-semibold uppercase tracking-wider mb-4 flex items-center justify-center gap-2"
-              style={{ color: "var(--claude-accent-muted)" }}
-            >
-              <span>✦</span> آية اليوم <span>✦</span>
-            </div>
-            <p className="quran-font text-white leading-relaxed mb-4" style={{ fontSize: "1.6rem" }}>
-              {dailyVerse.text}
-            </p>
-            <p className="text-sm" style={{ color: "var(--claude-text-subtle)" }}>
-              سورة {dailyVerse.surah} — الآية {dailyVerse.ayah}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link
-              href="/ask"
-              className="inline-flex items-center gap-2 font-bold py-4 px-8 rounded-xl text-lg transition-all shadow-lg"
-              style={{ backgroundColor: "var(--claude-accent)", color: "white" }}
-            >
-              <span>💬</span> اسأل الآن
-            </Link>
-            <Link
-              href="/reader"
-              className="inline-flex items-center gap-2 font-bold py-4 px-8 rounded-xl text-lg transition-all"
-              style={{
-                backgroundColor: "rgba(255,255,255,0.08)",
-                color: "white",
-                border: "1px solid rgba(255,255,255,0.15)",
-              }}
-            >
-              <span>📖</span> تصفح القرآن
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats section */}
-      <section
-        className="py-10 border-b"
-        style={{ backgroundColor: "white", borderColor: "var(--claude-border)" }}
-      >
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {[
-              { number: "6,236", label: "آية قرآنية", icon: "📜" },
-              { number: "114", label: "سورة كريمة", icon: "📚" },
-              { number: "10", label: "مجالات حياتية", icon: "🎯" },
-              { number: "∞", label: "إجابات قرآنية", icon: "✨" },
-            ].map((stat, i) => (
-              <div key={i} className="p-4">
-                <div className="text-3xl mb-2">{stat.icon}</div>
-                <div className="text-3xl font-bold mb-1" style={{ color: "var(--claude-accent)" }}>
-                  {stat.number}
-                </div>
-                <div className="text-sm" style={{ color: "var(--claude-text-muted)" }}>
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Categories grid */}
-      <section className="py-16 px-4">
+    <div className="relative">
+      <HeroSection />
+      <section className="relative py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <div
-              className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4"
-              style={{
-                backgroundColor: "var(--claude-accent-light)",
-                color: "var(--claude-accent-hover)",
-              }}
-            >
-              مجالات الحياة
-            </div>
-            <h2 className="text-3xl font-bold mb-4" style={{ color: "var(--claude-text)" }}>
-              استكشف بحسب اهتمامك
-            </h2>
-            <p className="max-w-xl mx-auto" style={{ color: "var(--claude-text-muted)" }}>
-              اختر المجال الذي يهمك وسنقدم لك الإرشاد القرآني المناسب
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {CATEGORIES.map((cat) => (
-              <Link
-                key={cat.id}
-                href={cat.id === "chat" ? "/ask" : cat.id === "azkar" ? "/azkar" : `/categories/${cat.id}`}
-                className="category-card flex flex-col items-center text-center gap-4 group"
-              >
-                <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-sm group-hover:shadow-md transition-shadow"
-                  style={{ backgroundColor: "var(--claude-surface)" }}
-                >
-                  {cat.icon}
-                </div>
-                <h3 className="text-lg font-bold" style={{ color: "var(--claude-text)" }}>
-                  {cat.nameAr}
-                </h3>
-                <p className="text-sm leading-relaxed flex-1" style={{ color: "var(--claude-text-muted)" }}>
-                  {cat.description}
-                </p>
-                <span
-                  className="text-xs font-semibold px-4 py-1.5 rounded-full transition-colors"
-                  style={{
-                    backgroundColor: "var(--claude-accent-light)",
-                    color: "var(--claude-accent-hover)",
-                  }}
-                >
-                  استكشف ←
-                </span>
-              </Link>
-            ))}
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold font-display gradient-text mb-4">🗂️ فئات الحياة القرآنية</h2>
+            <p className="text-gray-400 max-w-2xl mx-auto font-display">اختر الموضوع الذي يهمك واحصل على إرشاد قرآني مخصص بتقنية الذكاء الاصطناعي</p>
+            <div className="mt-4 h-1 w-24 mx-auto bg-gradient-to-l from-quran-gold to-yellow-600 rounded-full" />
+          </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {categories.map((category, index) => (<CategoryCard key={category.id} category={category} index={index} />))}
           </div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="py-16 px-4" style={{ backgroundColor: "var(--claude-surface)" }}>
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <div
-              className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4"
-              style={{
-                backgroundColor: "var(--claude-accent-light)",
-                color: "var(--claude-accent-hover)",
-              }}
-            >
-              كيف يعمل؟
-            </div>
-            <h2 className="text-3xl font-bold" style={{ color: "var(--claude-text)" }}>
-              ثلاث خطوات بسيطة
-            </h2>
-          </div>
+      <section className="relative py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold font-display gradient-text mb-4">✨ مميزات المنصة</h2>
+            <div className="mt-4 h-1 w-24 mx-auto bg-gradient-to-l from-quran-gold to-yellow-600 rounded-full" />
+          </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { step: "01", icon: "✍️", title: "اكتب سؤالك", desc: "اطرح أي سؤال يتعلق بحياتك بأي أسلوب" },
-              { step: "02", icon: "🤖", title: "يحلل الذكاء الاصطناعي", desc: "يبحث النظام في القرآن الكريم وكتب التفسير" },
-              { step: "03", icon: "📖", title: "تحصل على الإجابة", desc: "تستقبل إرشاداً قرآنياً دقيقاً مع آيات التلاوة" },
-            ].map((item) => (
-              <div key={item.step} className="card text-center relative">
-                <div
-                  className="absolute -top-3 right-6 text-xs font-bold px-2 py-0.5 rounded-md"
-                  style={{
-                    backgroundColor: "var(--claude-accent)",
-                    color: "white",
-                  }}
-                >
-                  {item.step}
-                </div>
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 mt-2"
-                  style={{ backgroundColor: "var(--claude-accent-light)" }}
-                >
-                  {item.icon}
-                </div>
-                <h3 className="text-lg font-bold mb-2" style={{ color: "var(--claude-text)" }}>
-                  {item.title}
-                </h3>
-                <p className="text-sm" style={{ color: "var(--claude-text-muted)" }}>
-                  {item.desc}
-                </p>
-              </div>
+            {[{ icon: "��", title: "ذكاء اصطناعي متقدم", description: "نستخدم أحدث تقنيات الذكاء الاصطناعي ومعالجة اللغة الطبيعية لفهم أسئلتك وتقديم إرشادات قرآنية دقيقة" }, { icon: "📖", title: "قاعدة بيانات شاملة", description: "تشمل جميع آيات القرآن الكريم مع التفاسير المتعددة من كبار العلماء والمفسرين" }, { icon: "🔬", title: "معجزات علمية موثقة", description: "اكتشف الحقائق العلمية المذكورة في القرآن قبل أن يكتشفها العلم الحديث بقرون" }, { icon: "🌐", title: "واجهة عربية متكاملة", description: "تصميم حديث وأنيق يدعم اللغة العربية بالكامل مع الخط العثماني الجميل" }, { icon: "🔍", title: "بحث ذكي ومتقدم", description: "ابحث بالكلمات المفتاحية أو المواضيع أو أرقام السور والآيات بسهولة ودقة" }, { icon: "📝", title: "تفاسير متعددة", description: "اطلع على تفاسير العلماء الموثقين لكل آية مع شرح مفصل وسياق تاريخي" }].map((feature, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} viewport={{ once: true }} className="glass rounded-2xl p-8 border border-white/5 card-hover text-center">
+                <div className="text-4xl mb-4">{feature.icon}</div>
+                <h3 className="text-xl font-bold font-display text-white mb-3">{feature.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed font-display">{feature.description}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features section */}
-      <section className="py-16 px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <div
-              className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4"
-              style={{
-                backgroundColor: "var(--claude-accent-light)",
-                color: "var(--claude-accent-hover)",
-              }}
-            >
-              مميزات المنصة
+      <section className="relative py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative glass rounded-3xl p-12 border border-quran-gold/20 text-center overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-quran-gold/5 to-transparent" />
+            <div className="relative z-10">
+              <p className="quran-text text-2xl text-quran-gold mb-6 leading-loose">﴿ كِتَابٌ أَنزَلْنَاهُ إِلَيْكَ مُبَارَكٌ لِّيَدَّبَّرُوا آيَاتِهِ وَلِيَتَذَكَّرَ أُولُو الْأَلْبَابِ ﴾</p>
+              <p className="text-sm text-gray-400 mb-8 font-display">سورة ص - الآية 29</p>
+              <h3 className="text-2xl font-bold font-display text-white mb-4">ابدأ رحلتك مع القرآن الكريم الآن</h3>
+              <a href="/ask" className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-l from-quran-gold to-yellow-600 text-quran-dark font-bold rounded-xl text-lg font-display shadow-lg shadow-quran-gold/20 hover:shadow-quran-gold/40 transition-all hover:scale-105">🤖 اسأل القرآن الآن</a>
             </div>
-            <h2 className="text-3xl font-bold" style={{ color: "var(--claude-text)" }}>
-              لماذا تختارنا؟
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { icon: "🌐", title: "متاح دائماً", desc: "يعمل 24/7 دون انقطاع مع إجابات فورية" },
-              { icon: "🔒", title: "آمن وموثوق", desc: "بيانات القرآن مأخوذة من مصادر موثوقة ومعتمدة" },
-              { icon: "📱", title: "متوافق مع الجوال", desc: "تجربة سلسة على جميع الأجهزة والشاشات" },
-            ].map((feat, i) => (
-              <div
-                key={i}
-                className="card text-center"
-                style={{ borderTop: "3px solid var(--claude-accent)" }}
-              >
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4"
-                  style={{ backgroundColor: "var(--claude-accent-light)" }}
-                >
-                  {feat.icon}
-                </div>
-                <h3 className="text-lg font-bold mb-2" style={{ color: "var(--claude-text)" }}>
-                  {feat.title}
-                </h3>
-                <p className="text-sm" style={{ color: "var(--claude-text-muted)" }}>
-                  {feat.desc}
-                </p>
-              </div>
-            ))}
-          </div>
+          </motion.div>
         </div>
       </section>
-
-      {/* CTA */}
-      <section
-        className="py-16 px-4 text-center"
-        style={{ backgroundColor: "var(--claude-dark)" }}
-      >
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-3xl font-bold mb-4 text-white">ابدأ رحلتك القرآنية الآن</h2>
-          <p className="mb-8" style={{ color: "var(--claude-text-muted)" }}>
-            أكثر من 6000 آية قرآنية تنتظر لمساعدتك في إيجاد الحلول
-          </p>
-          <Link
-            href="/ask"
-            className="inline-flex items-center gap-2 font-bold py-4 px-10 rounded-xl text-lg transition-all shadow-lg"
-            style={{ backgroundColor: "var(--claude-accent)", color: "white" }}
-          >
-            <span>💬</span> اسأل القرآن الآن
-          </Link>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer
-        className="py-10 px-4 text-center text-sm"
-        style={{
-          backgroundColor: "#1A1614",
-          borderTop: "1px solid var(--claude-dark-3)",
-          color: "var(--claude-text-subtle)",
-        }}
-      >
-        <div className="max-w-2xl mx-auto space-y-3">
-          <p>
-            ⚠️ <strong style={{ color: "var(--claude-text-muted)" }}>تنبيه:</strong> هذه المنصة للتوجيه العام فقط وليست بديلاً عن الفتاوى الشرعية المعتمدة
-          </p>
-          <div
-            className="w-16 mx-auto border-t"
-            style={{ borderColor: "var(--claude-dark-3)" }}
-          />
-          <p style={{ color: "var(--claude-text-muted)" }}>
-            تصميم وتطوير:{" "}
-            <span className="font-semibold" style={{ color: "var(--claude-accent)" }}>
-              عبدالعزيز بن سلطان العتيبي
-            </span>
-          </p>
-          <p>© 2026 حلول الحياة من القرآن الكريم | جميع الحقوق محفوظة</p>
-        </div>
-      </footer>
     </div>
   );
 }
-

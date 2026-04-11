@@ -1,15 +1,19 @@
+"""Miracles Router — Endpoints for scientific miracles in the Quran."""
+
 from fastapi import APIRouter
-from data.scientific_miracles import SCIENTIFIC_MIRACLES
+from data.miracles_data import MIRACLES
 
-router = APIRouter(prefix="/api/miracles", tags=["miracles"])
-
-
-@router.get("")
-def get_miracles():
-    return SCIENTIFIC_MIRACLES
+router = APIRouter()
 
 
-@router.get("/{category}")
-def get_miracles_by_category(category: str):
-    filtered = [m for m in SCIENTIFIC_MIRACLES if m["category"] == category]
-    return filtered
+@router.get("/miracles")
+async def get_miracles():
+    return MIRACLES
+
+
+@router.get("/miracles/{miracle_id}")
+async def get_miracle(miracle_id: int):
+    for miracle in MIRACLES:
+        if miracle["id"] == miracle_id:
+            return miracle
+    return {"error": "لم يتم العثور على المعجزة"}

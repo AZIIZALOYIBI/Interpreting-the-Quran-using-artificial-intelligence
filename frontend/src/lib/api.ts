@@ -1,61 +1,56 @@
-import type { ChatRequest, ChatResponse, Ayah, Tafsir, Category, SurahInfo, ScientificMiracle } from "@/types";
+import axios from "axios";
+import {
+  AskQuranRequest,
+  AskQuranResponse,
+  Category,
+  ScientificMiracle,
+  SearchResult,
+  Surah,
+  QuranVerse,
+  TafsirEntry,
+} from "@/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-async function fetchAPI<T>(path: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
-    ...options,
-  });
+const api = axios.create({
+  baseURL: API_BASE,
+  headers: { "Content-Type": "application/json" },
+  timeout: 30000,
+});
 
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`API Error ${response.status}: ${error}`);
-  }
+export const askQuran = async (data: AskQuranRequest): Promise<AskQuranResponse> => {
+  const response = await api.post("/api/ask-quran", data);
+  return response.data;
+};
 
-  return response.json();
-}
+export const getCategories = async (): Promise<Category[]> => {
+  const response = await api.get("/api/categories");
+  return response.data;
+};
 
-export async function askQuran(question: string, category?: string): Promise<ChatResponse> {
-  const body: ChatRequest = { question, category, language: "ar" };
-  return fetchAPI<ChatResponse>("/api/ask-quran", {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
-}
+export const searchVerses = async (query: string): Promise<SearchResult> => {
+  const response = await api.get(`/api/quran/search?q=${encodeURIComponent(query)}`);
+  return response.data;
+};
 
-export async function searchAyahs(query: string): Promise<Ayah[]> {
-  return fetchAPI<Ayah[]>(`/api/quran/search?q=${encodeURIComponent(query)}`);
-}
+export const getMiracles = async (): Promise<ScientificMiracle[]> => {
+  const response = await api.get("/api/miracles");
+  return response.data;
+};
 
-export async function getAyah(surahId: number, ayahNum: number): Promise<Ayah> {
-  return fetchAPI<Ayah>(`/api/quran/ayah/${surahId}/${ayahNum}`);
-}
+export const getSurahs = async (): Promise<Surah[]> => {
+  const response = await api.get("/api/quran/surahs");
+  return response.data;
+};
 
-export async function getTafsir(ayahId: number): Promise<Tafsir[]> {
-  return fetchAPI<Tafsir[]>(`/api/tafsir/${ayahId}`);
-}
+export const getSurahVerses = async (surahNumber: number): Promise<QuranVerse[]> => {
+  const response = await api.get(`/api/quran/surah/${surahNumber}`);
+  return response.data;
+};
 
-export async function getCategories(): Promise<Category[]> {
-  return fetchAPI<Category[]>("/api/categories");
-}
+export const getTafsir = async (surahNumber: number, ayahNumber: number): Promise<TafsirEntry[]> => {
+  const response = await api.get(`/api/tafsir/${surahNumber}/${ayahNumber}`);
+  return response.data;
+};
 
-export async function getCategoryContent(category: string): Promise<{ category: Category; ayahs: Ayah[] }> {
-  return fetchAPI<{ category: Category; ayahs: Ayah[] }>(`/api/categories/${category}`);
-}
-
-export async function getSurahs(): Promise<SurahInfo[]> {
-  return fetchAPI<SurahInfo[]>("/api/quran/surahs");
-}
-
-export async function getSurah(surahId: number): Promise<{ info: SurahInfo; ayahs: Ayah[] }> {
-  return fetchAPI<{ info: SurahInfo; ayahs: Ayah[] }>(`/api/quran/surah/${surahId}`);
-}
-
-export async function getMiracles(category?: string): Promise<ScientificMiracle[]> {
-  const path = category ? `/api/miracles/${category}` : "/api/miracles";
-  return fetchAPI<ScientificMiracle[]>(path);
-}
+export default api;

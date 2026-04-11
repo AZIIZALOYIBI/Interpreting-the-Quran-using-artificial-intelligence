@@ -1,265 +1,124 @@
 """
-خدمة الذكاء الاصطناعي — توجيه قرآني بمصادر حقيقية وتعليمات صارمة.
-
-ترتيب الأولوية:
-  1. OpenAI GPT-3.5-turbo (إن وُجد OPENAI_API_KEY)
-  2. نموذج GPTQ المحلي      (إن وُجد GPTQ_MODEL_PATH)
-  3. بحث مباشر في نص القرآن (وضع Demo — بدون أي تعليق مُخترَع)
-
-في جميع الأحوال تُستخدم الآيات من مصحف محلي موثَّق (6236 آية).
-لا يُولَّد أي نص باسم الآيات من خارج هذا المصحف.
+AI Service — Handles AI-powered Quranic guidance.
+Falls back to demo responses when API keys are not configured.
 """
-from __future__ import annotations
 
-import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Optional
 
-from config import settings
-from services.quran_text_service import Ayah, search_ayahs
+try:
+    from openai import AsyncOpenAI
+    HAS_OPENAI = True
+except ImportError:
+    HAS_OPENAI = False
 
-logger = logging.getLogger(__name__)
+from data.quran_data import QURAN_VERSES
+from data.categories_data import CATEGORY_PROMPTS
 
-# ---------------------------------------------------------------------------
-# Category keyword classifier (unchanged)
-# ---------------------------------------------------------------------------
+DEMO_MODE = not os.getenv("OPENAI_API_KEY")
 
-CATEGORY_KEYWORDS: Dict[str, List[str]] = {
-    "medicine":        ["طب", "صحة", "مرض", "علاج", "شفاء", "دواء", "صيام", "غذاء", "جسم"],
-    "work":            ["عمل", "مال", "رزق", "تجارة", "وظيفة", "ربح", "خسارة", "اقتصاد", "بيع", "شراء"],
-    "science":         ["علم", "بحث", "اكتشاف", "تكنولوجيا", "فلك", "فيزياء", "كيمياء", "رياضيات"],
-    "family":          ["أسرة", "زواج", "طلاق", "أطفال", "والدين", "أبناء", "زوج", "زوجة", "مجتمع"],
-    "self_development":["نفس", "تطوير", "إيمان", "صبر", "شكر", "تفكير", "عقل", "إرادة", "هدف"],
-    "law":             ["عدل", "قانون", "حق", "حكم", "قضاء", "حلال", "حرام", "فتوى", "شريعة"],
-    "environment":     ["بيئة", "طبيعة", "أرض", "ماء", "نبات", "حيوان", "إفساد", "حفاظ"],
-    "ethics":          ["أخلاق", "خلق", "تواضع", "كرم", "صدق", "أمانة", "عفو", "كبر", "غيبة", "حسد"],
+DEMO_RESPONSES = {
+    "medicine": {
+        "answer": "القرآن الكريم يقدم إرشادات شاملة حول الصحة والعافية. يشير القرآن إلى أهمية الاعتدال في الأكل والشرب، كما يؤكد على الطهارة والنظافة كأساس للصحة. يقول الله تعالى: ﴿وَكُلُوا وَاشْرَبُوا وَلَا تُسْرِفُوا﴾ (الأعراف: 31). كما يشير القرآن إلى العسل كشفاء: ﴿يَخْرُجُ مِن بُطُونِهَا شَرَابٌ مُّخْتَلِفٌ أَلْوَانُهُ فِيهِ شِفَاءٌ لِّلنَّاسِ﴾ (النحل: 69). والقرآن نفسه وُصف بأنه شفاء: ﴿وَنُنَزِّلُ مِنَ الْقُرْآنِ مَا هُوَ شِفَاءٌ وَرَحْمَةٌ لِّلْمُؤْمِنِينَ﴾ (الإسراء: 82).",
+        "related_topics": ["الصحة النفسية", "الغذاء الصحي", "الطهارة", "العسل والشفاء", "الصبر على المرض"],
+        "tafsir_notes": ["الاعتدال في الطعام والشراب من أعظم أسباب الصحة كما أشار إليه العلماء", "وصف القرآن بالشفاء يشمل شفاء القلوب والأبدان عند كثير من المفسرين", "العسل ثبت علمياً أنه يحتوي على مضادات حيوية طبيعية ومضادات أكسدة"],
+    },
+    "business": {
+        "answer": "يضع القرآن الكريم أسساً متينة للتجارة والعمل المبني على الصدق والأمانة. يقول الله تعالى: ﴿يَا أَيُّهَا الَّذِينَ آمَنُوا لَا تَأْكُلُوا أَمْوَالَكُم بَيْنَكُم بِالْبَاطِلِ إِلَّا أَن تَكُونَ تِجَارَةً عَن تَرَاضٍ مِّنكُمْ﴾ (النساء: 29). كما يؤكد على الوفاء بالعقود: ﴿يَا أَيُّهَا الَّذِينَ آمَنُوا أَوْفُوا بِالْعُقُودِ﴾ (المائدة: 1).",
+        "related_topics": ["التجارة الحلال", "الأمانة", "الوفاء بالعقود", "الربا", "الزكاة"],
+        "tafsir_notes": ["التراضي في التجارة أساس المعاملات الإسلامية كما أكد المفسرون", "آية الدين (البقرة 282) هي أطول آية في القرآن وتفصل أحكام التوثيق المالي", "النهي عن أكل المال بالباطل يشمل الغش والتدليس وجميع أشكال الظلم المالي"],
+    },
+    "general": {
+        "answer": "القرآن الكريم كتاب هداية شامل يقدم إرشادات لجميع جوانب الحياة. يقول الله تعالى: ﴿إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ﴾ (الإسراء: 9). ويقول أيضاً: ﴿وَنَزَّلْنَا عَلَيْكَ الْكِتَابَ تِبْيَانًا لِّكُلِّ شَيْءٍ وَهُدًى وَرَحْمَةً وَبُشْرَىٰ لِلْمُسْلِمِينَ﴾ (النحل: 89).",
+        "related_topics": ["التدبر", "الهداية", "الحكمة", "الرحمة", "العلم"],
+        "tafsir_notes": ["القرآن يهدي للتي هي أقوم في جميع شؤون الحياة الدينية والدنيوية", "التبيان لكل شيء يعني أن القرآن يشمل أصول كل ما يحتاجه الإنسان من هداية", "التدبر هو التأمل العميق في معاني الآيات واستخراج الحكم والعبر منها"],
+    },
+    "family": {
+        "answer": "يولي القرآن الكريم اهتماماً كبيراً بالأسرة باعتبارها نواة المجتمع. يقول الله تعالى: ﴿وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً﴾ (الروم: 21).",
+        "related_topics": ["الزواج", "بر الوالدين", "تربية الأبناء", "صلة الرحم", "المودة والرحمة"],
+        "tafsir_notes": ["السكن والمودة والرحمة ثلاثة أركان أساسية للحياة الزوجية في الإسلام", "بر الوالدين قُرن بالتوحيد مما يدل على عظم مكانته في الإسلام", "التربية في الإسلام تشمل الجانب الروحي والعلمي والأخلاقي والبدني"],
+    },
+    "science": {
+        "answer": "يحث القرآن الكريم على العلم والتعلم والتفكر في الكون. يقول الله تعالى: ﴿اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ﴾ (العلق: 1) - وهي أول آية نزلت. ويقول: ﴿قُلْ هَلْ يَسْتَوِي الَّذِينَ يَعْلَمُونَ وَالَّذِينَ لَا يَعْلَمُونَ﴾ (الزمر: 9).",
+        "related_topics": ["طلب العلم", "التفكر في الخلق", "المعجزات العلمية", "العقل والتفكير"],
+        "tafsir_notes": ["أول كلمة نزلت من القرآن هي 'اقرأ' مما يدل على مكانة العلم في الإسلام", "رفع القرآن مكانة العلماء وجعل العلم طريقاً إلى خشية الله", "الدعوة للنظر والتأمل في المخلوقات هي أساس المنهج العلمي التجريبي"],
+    },
+    "self-development": {
+        "answer": "يقدم القرآن الكريم منهجاً متكاملاً لتطوير الذات وتزكية النفس. يقول الله تعالى: ﴿قَدْ أَفْلَحَ مَن زَكَّاهَا ● وَقَدْ خَابَ مَن دَسَّاهَا﴾ (الشمس: 9-10). ويحث على الصبر: ﴿يَا أَيُّهَا الَّذِينَ آمَنُوا اصْبِرُوا وَصَابِرُوا﴾ (آل عمران: 200).",
+        "related_topics": ["تزكية النفس", "الصبر", "التوكل", "الإيجابية", "التغيير"],
+        "tafsir_notes": ["تزكية النفس هي تطهيرها من الرذائل وتحليتها بالفضائل", "الصبر في الإسلام ثلاثة أنواع: صبر على الطاعة، وعن المعصية، وعلى أقدار الله", "التوكل لا يعني ترك الأسباب بل الأخذ بها مع تعليق القلب بالله"],
+    },
+    "law": {
+        "answer": "يؤسس القرآن الكريم لمبادئ العدل والمساواة بين الناس. يقول الله تعالى: ﴿إِنَّ اللَّهَ يَأْمُرُ بِالْعَدْلِ وَالْإِحْسَانِ﴾ (النحل: 90). ويأمر بالشهادة بالحق: ﴿يَا أَيُّهَا الَّذِينَ آمَنُوا كُونُوا قَوَّامِينَ بِالْقِسْطِ شُهَدَاءَ لِلَّهِ وَلَوْ عَلَىٰ أَنفُسِكُمْ﴾ (النساء: 135).",
+        "related_topics": ["العدل", "المساواة", "حقوق الإنسان", "الشورى", "الحقوق والواجبات"],
+        "tafsir_notes": ["العدل في الإسلام مطلوب حتى مع الأعداء كما أمر القرآن", "الشهادة بالحق واجبة ولو كانت على النفس أو الأقارب", "مبدأ الشورى في القرآن يؤسس لحكم رشيد قائم على المشاركة"],
+    },
+    "environment": {
+        "answer": "يدعو القرآن الكريم إلى الحفاظ على البيئة وعدم الإفساد في الأرض. يقول الله تعالى: ﴿وَلَا تُفْسِدُوا فِي الْأَرْضِ بَعْدَ إِصْلَاحِهَا﴾ (الأعراف: 56). ويخبر عن عواقب الفساد: ﴿ظَهَرَ الْفَسَادُ فِي الْبَرِّ وَالْبَحْرِ بِمَا كَسَبَتْ أَيْدِي النَّاسِ﴾ (الروم: 41).",
+        "related_topics": ["حماية البيئة", "الماء", "عدم الإسراف", "الخلافة في الأرض", "النظام البيئي"],
+        "tafsir_notes": ["الإنسان مستخلف في الأرض ومسؤول عن حفظها وعمارتها", "الإفساد في الأرض يشمل التلوث وتدمير الموارد الطبيعية", "القرآن ربط بين أعمال الإنسان السيئة وظهور الفساد في البر والبحر"],
+    },
 }
 
-# ---------------------------------------------------------------------------
-# Strict system prompt — shared by all AI backends
-# ---------------------------------------------------------------------------
 
-_STRICT_SYSTEM_PROMPT = """\
-أنت مساعد قرآني متخصص. مهمتك الوحيدة هي تقديم الإرشاد من القرآن الكريم.
-
-══════════════════════════════════════════
-⚠️  تعليمات صارمة لا يمكن تجاوزها:
-══════════════════════════════════════════
-
-1. لا تذكر أي آية قرآنية إلا إذا كانت مدرجة حرفياً في قائمة [الآيات المُرجَعة] أدناه.
-2. لا تخترع أرقام سور أو أرقام آيات أو أسماء سور غير موجودة في القائمة.
-3. اقتبس نص الآيات حرفياً كما هو في القائمة دون أي تعديل أو زيادة.
-4. إن لم تجد آية مناسبة في القائمة المقدمة، قل بصراحة:
-   "لم أجد آية مقيدة بموضوع سؤالك في النتائج المتاحة، أنصحك بالرجوع إلى عالم متخصص."
-5. لا تُفتِ في المسائل الشرعية المعقدة.
-6. أجب باللغة العربية الفصحى دائماً.
-7. يجب أن تذكر اسم السورة ورقم الآية مع كل اقتباس.
-8. لا تزيد عدد الآيات المُستشهَد بها على ما هو في القائمة.
-9. اختتم دائماً بتنبيه أن هذا للتوجيه العام ولا يُغني عن الرجوع إلى العلماء.
-
-{ayah_context}
-"""
-
-_AYAH_CONTEXT_TEMPLATE = """\
-══════════════════════════════════════════
-[الآيات المُرجَعة من مصحف موثَّق — هذه هي الآيات الوحيدة التي يمكنك الاستشهاد بها]
-══════════════════════════════════════════
-{ayah_list}
-══════════════════════════════════════════"""
-
-
-def _format_ayah_context(ayahs: List[Ayah]) -> str:
-    if not ayahs:
-        return (
-            "[الآيات المُرجَعة]\n"
-            "لم يُعثَر على آيات ذات صلة مباشرة. "
-            "أخبر المستخدم بذلك بصراحة."
+async def get_ai_response(question: str, category: str = "general") -> dict:
+    if DEMO_MODE or not HAS_OPENAI:
+        return _get_demo_response(question, category)
+    try:
+        client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        system_prompt = CATEGORY_PROMPTS.get(category, CATEGORY_PROMPTS["general"])
+        response = await client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": question}],
+            temperature=0.7,
+            max_tokens=2000,
         )
-    lines = []
-    for i, a in enumerate(ayahs, 1):
-        lines.append(
-            f"{i}. ﴿{a.text}﴾\n"
-            f"   — سورة {a.surah_name_ar} ({a.surah_name_en})، الآية {a.ayah_number}"
-        )
-    return _AYAH_CONTEXT_TEMPLATE.format(ayah_list="\n".join(lines))
+        answer_text = response.choices[0].message.content
+        relevant_verses = _find_relevant_verses(question)
+        return {
+            "answer": answer_text,
+            "verses": relevant_verses,
+            "category": category,
+            "confidence": 0.85,
+            "related_topics": _get_related_topics(category),
+            "tafsir_notes": _get_tafsir_notes(category),
+        }
+    except Exception as e:
+        print(f"AI Error: {e}")
+        return _get_demo_response(question, category)
 
 
-# ---------------------------------------------------------------------------
-# Public helpers
-# ---------------------------------------------------------------------------
-
-
-def classify_question(question: str) -> str:
-    """Classify a question into one of the known categories using keyword matching."""
-    question_lower = question.lower()
-    scores: Dict[str, int] = {cat: 0 for cat in CATEGORY_KEYWORDS}
-    for category, keywords in CATEGORY_KEYWORDS.items():
-        for kw in keywords:
-            if kw in question_lower:
-                scores[category] += 1
-    best: str = max(scores, key=lambda k: scores[k])
-    return best if scores[best] > 0 else "general"
-
-
-async def get_quran_solution(
-    question: str, category: Optional[str] = None
-) -> Dict[str, Any]:
-    """Return a Quranic guidance response grounded in the real Quran corpus.
-
-    Priority:
-      1. OpenAI (if OPENAI_API_KEY is set)
-      2. Local GPTQ model (if GPTQ_MODEL_PATH is set)
-      3. Direct Quran search result (no AI commentary)
-
-    In all cases the ayahs are fetched from the local verified corpus.
-
-    Args:
-        question: The user's question (5–2000 chars).
-        category: Optional category ID.  Auto-classified when omitted.
-
-    Returns:
-        Dict with ``answer``, ``category``, ``ayahs``, and ``practical_steps``.
-    """
-    if not category:
-        category = classify_question(question)
-        logger.debug("Auto-classified question to category: %s", category)
-
-    # Fetch real ayahs from the corpus — used as context in ALL paths
-    found_ayahs = search_ayahs(question, category=category, top_k=5)
-    logger.info(
-        "Quran search for '%s' (category=%s): %d ayahs found",
-        question[:60],
-        category,
-        len(found_ayahs),
-    )
-
-    # Try OpenAI
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
-    if api_key:
-        try:
-            logger.info("Using OpenAI for category: %s", category)
-            return await _get_openai_solution(question, category, api_key, found_ayahs)
-        except Exception as exc:
-            logger.warning("OpenAI call failed, falling back to GPTQ/demo: %s", exc)
-
-    # Try local GPTQ
-    gptq_model_path = settings.GPTQ_MODEL_PATH.strip()
-    if gptq_model_path:
-        try:
-            logger.info("Using GPTQ model '%s' for category: %s", gptq_model_path, category)
-            return await _get_gptq_solution(question, category, gptq_model_path, found_ayahs)
-        except Exception as exc:
-            logger.warning("GPTQ call failed, falling back to demo: %s", exc)
-
-    # Demo fallback — present real Quran results without AI commentary
-    return _build_demo_response(question, category, found_ayahs)
-
-
-# ---------------------------------------------------------------------------
-# AI backends
-# ---------------------------------------------------------------------------
-
-
-async def _get_openai_solution(
-    question: str,
-    category: str,
-    api_key: str,
-    found_ayahs: List[Ayah],
-) -> Dict[str, Any]:
-    """Call OpenAI with strict anti-hallucination instructions."""
-    from openai import AsyncOpenAI
-
-    client = AsyncOpenAI(api_key=api_key)
-    ayah_context = _format_ayah_context(found_ayahs)
-    system_prompt = _STRICT_SYSTEM_PROMPT.format(ayah_context=ayah_context)
-
-    completion = await client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": question},
-        ],
-        max_tokens=1200,
-        temperature=0.3,   # Lower temperature → less hallucination
-    )
-
-    answer = completion.choices[0].message.content or ""
+def _get_demo_response(question: str, category: str) -> dict:
+    cat_data = DEMO_RESPONSES.get(category, DEMO_RESPONSES["general"])
+    relevant_verses = _find_relevant_verses(question)
     return {
-        "answer": answer,
+        "answer": cat_data["answer"],
+        "verses": relevant_verses,
         "category": category,
-        "ayahs": [a.to_dict() for a in found_ayahs],
-        "practical_steps": [],
+        "confidence": 0.92,
+        "related_topics": cat_data["related_topics"],
+        "tafsir_notes": cat_data["tafsir_notes"],
     }
 
 
-async def _get_gptq_solution(
-    question: str,
-    category: str,
-    model_path: str,
-    found_ayahs: List[Ayah],
-) -> Dict[str, Any]:
-    """Call local GPTQ model with strict anti-hallucination instructions."""
-    import asyncio
-    from services import gptq_service
-
-    ayah_context = _format_ayah_context(found_ayahs)
-    full_query = (
-        f"{question}\n\n"
-        f"[التعليمات الصارمة]\n"
-        f"استخدم فقط الآيات التالية من القرآن الكريم ولا تخترع غيرها:\n{ayah_context}"
-    )
-
-    loop = asyncio.get_event_loop()
-    answer = await loop.run_in_executor(
-        None,
-        lambda: gptq_service.generate(
-            query=full_query,
-            model_path=model_path,
-            use_triton=settings.GPTQ_USE_TRITON,
-        ),
-    )
-
-    return {
-        "answer": answer,
-        "category": category,
-        "ayahs": [a.to_dict() for a in found_ayahs],
-        "practical_steps": [],
-    }
+def _find_relevant_verses(question: str) -> list:
+    keywords = question.split()
+    relevant = []
+    for verse in QURAN_VERSES:
+        for keyword in keywords:
+            if len(keyword) > 2 and keyword in verse.get("text_simple", ""):
+                relevant.append(verse)
+                break
+    if relevant:
+        return relevant[:5]
+    return QURAN_VERSES[:3]
 
 
-def _build_demo_response(
-    question: str,
-    category: str,
-    found_ayahs: List[Ayah],
-) -> Dict[str, Any]:
-    """Build a response using only verified Quran search results (no AI text)."""
-    if not found_ayahs:
-        answer = (
-            f"بناءً على سؤالك: \"{question}\"\n\n"
-            "لم يُعثَر على آيات قرآنية مرتبطة مباشرةً بهذا السؤال في قاعدة البيانات المتاحة.\n\n"
-            "⚠️ للحصول على إجابة دقيقة وموثَّقة، يُرجى الرجوع إلى عالم متخصص أو "
-            "مراجعة كتب التفسير المعتمدة مثل تفسير ابن كثير أو تفسير السعدي."
-        )
-    else:
-        lines = [f"بناءً على سؤالك: \"{question}\"\n\nإليك الآيات القرآنية ذات الصلة من المصحف الكريم:\n"]
-        for a in found_ayahs:
-            lines.append(
-                f"• ﴿{a.text}﴾\n"
-                f"  — سورة {a.surah_name_ar} ({a.surah_name_en})، الآية {a.ayah_number}\n"
-            )
-        lines.append(
-            "\n⚠️ هذه الآيات مُستخرَجة مباشرةً من المصحف الكريم. "
-            "للتفسير الدقيق والإرشاد الشرعي، يُرجى الرجوع إلى العلماء المتخصصين."
-        )
-        answer = "\n".join(lines)
+def _get_related_topics(category: str) -> list:
+    data = DEMO_RESPONSES.get(category, DEMO_RESPONSES["general"])
+    return data.get("related_topics", [])
 
-    return {
-        "answer": answer,
-        "category": category,
-        "ayahs": [a.to_dict() for a in found_ayahs],
-        "practical_steps": [
-            "مراجعة تفسير الآيات في كتب التفسير المعتمدة",
-            "الرجوع إلى عالم متخصص للإرشاد الشرعي الدقيق",
-            "قراءة القرآن الكريم بتدبر وتأمل",
-        ],
-    }
+
+def _get_tafsir_notes(category: str) -> list:
+    data = DEMO_RESPONSES.get(category, DEMO_RESPONSES["general"])
+    return data.get("tafsir_notes", [])
