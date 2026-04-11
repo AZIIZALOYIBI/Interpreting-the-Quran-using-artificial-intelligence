@@ -4,6 +4,8 @@ import random
 import urllib.parse
 from typing import Optional
 
+import httpx
+
 from data.quran_data import QURAN_VERSES, SURAHS
 import services.quran_text_service as _corpus
 
@@ -56,7 +58,6 @@ async def get_ayah_by_index(index: int) -> dict | None:
 async def get_ayah(surah: int, verse: int) -> dict | None:
     """Fetch a single ayah from AlQuran.cloud API."""
     try:
-        import httpx
         async with httpx.AsyncClient() as client:
             resp = await client.get(f"{_BASE_URL}/ayah/{surah}:{verse}/ar.uthmani")
             if resp.status_code != 200:
@@ -75,7 +76,6 @@ async def get_ayah(surah: int, verse: int) -> dict | None:
 async def get_surah(surah_number: int) -> dict | None:
     """Fetch a full surah (with ayahs) from AlQuran.cloud API."""
     try:
-        import httpx
         async with httpx.AsyncClient() as client:
             resp = await client.get(
                 f"{_BASE_URL}/surah/{surah_number}/ar.uthmani"
@@ -107,7 +107,6 @@ async def get_surah(surah_number: int) -> dict | None:
 async def get_surah_list() -> list:
     """Fetch the full list of surahs from AlQuran.cloud API."""
     try:
-        import httpx
         async with httpx.AsyncClient() as client:
             resp = await client.get(f"{_BASE_URL}/surah")
             if resp.status_code != 200:
@@ -130,7 +129,6 @@ async def get_surah_list() -> list:
 async def search_ayahs(query: str) -> list:
     """Search ayahs via AlQuran.cloud API (max 10 results)."""
     try:
-        import httpx
         encoded = urllib.parse.quote(query, safe="")
         async with httpx.AsyncClient() as client:
             resp = await client.get(f"{_BASE_URL}/search/{encoded}/all/ar")

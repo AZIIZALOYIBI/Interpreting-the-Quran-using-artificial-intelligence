@@ -17,6 +17,11 @@ from routers import quran, miracles, tafsir
 from routers import chat as chat_router
 from routers import upload
 
+try:
+    import psutil as _psutil
+except ImportError:
+    _psutil = None  # type: ignore[assignment]
+
 load_dotenv()
 
 _start_time = time.time()
@@ -82,11 +87,15 @@ app.add_middleware(
 # Custom error handlers
 # ---------------------------------------------------------------------------
 
+_NOT_FOUND_DETAIL = "Not Found"
+_NOT_FOUND_AR = "المورد المطلوب غير موجود"
+
+
 @app.exception_handler(StarletteHTTPException)
 async def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
     detail = exc.detail
-    if exc.status_code == 404 and detail == "Not Found":
-        detail = "المورد المطلوب غير موجود"
+    if exc.status_code == 404 and detail == _NOT_FOUND_DETAIL:
+        detail = _NOT_FOUND_AR
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": detail, "path": str(request.url.path)},
@@ -120,16 +129,14 @@ async def root():
 
 
 def _get_memory_info() -> dict:
-    try:
-        import psutil
-        m = psutil.virtual_memory()
-        return {
-            "total_mb": m.total // (1024 * 1024),
-            "available_mb": m.available // (1024 * 1024),
-            "percent": m.percent,
-        }
-    except Exception:
+    if _psutil is None:
         return {}
+    m = _psutil.virtual_memory()
+    return {
+        "total_mb": m.total // (1024 * 1024),
+        "available_mb": m.available // (1024 * 1024),
+        "percent": m.percent,
+    }
 
 
 @app.get("/health")

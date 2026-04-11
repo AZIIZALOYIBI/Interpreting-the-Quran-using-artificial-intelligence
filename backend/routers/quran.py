@@ -51,8 +51,8 @@ async def get_random_ayah(surah_id: Optional[int] = None):
 async def word_of_day():
     """Return today's fixed Quranic ayah (deterministic per calendar date)."""
     today = datetime.date.today()
-    n = total_ayahs()
-    day_index = today.toordinal() % n
+    corpus_size = total_ayahs()
+    day_index = today.toordinal() % corpus_size
     ayah = await quran_service.get_ayah_by_index(day_index)
     if ayah is None:
         raise HTTPException(status_code=503, detail="المصحف غير متاح")
