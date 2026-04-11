@@ -49,6 +49,10 @@ _FLAKE8_CMD = [
 _TSC_CMD = ["npx", "tsc", "--noEmit", "--project", "frontend/tsconfig.json"]
 _NEXT_LINT_CMD = ["npx", "next", "lint", "--dir", "frontend/src"]
 
+# timeouts
+TSC_TIMEOUT_SECONDS = 120
+PYTEST_TIMEOUT_SECONDS = 300
+
 
 class Validator:
     """يُنفِّذ فحوصات الكود ويُعيد قائمة الأخطاء."""
@@ -173,7 +177,7 @@ class Validator:
             capture_output=True,
             text=True,
             cwd=str(REPO_ROOT),
-            timeout=120,
+            timeout=TSC_TIMEOUT_SECONDS,
         )
         if result.returncode == 0:
             return []
@@ -201,7 +205,7 @@ class Validator:
             capture_output=True,
             text=True,
             cwd=str(REPO_ROOT / "backend"),
-            timeout=300,
+            timeout=PYTEST_TIMEOUT_SECONDS,
             env=env,
         )
 

@@ -243,14 +243,15 @@ class TechDebtPredator:
                 try:
                     content = src_file.read_text(encoding="utf-8", errors="replace")
                     for i, line in enumerate(content.splitlines(), 1):
-                        if TODO_PATTERN.search(line):
+                        match = TODO_PATTERN.search(line)
+                        if match:
                             rel_path = str(src_file.relative_to(REPO_ROOT))
                             self._debts.append(
                                 DebtItem(
                                     file_path=rel_path,
                                     line_number=i,
                                     smell_type="todo",
-                                    description=f"تعليق {TODO_PATTERN.search(line).group(1)} قديم في السطر {i}: {line.strip()[:120]}",
+                                    description=f"تعليق {match.group(1)} قديم في السطر {i}: {line.strip()[:120]}",
                                     severity="low",
                                     code_snippet=line.strip(),
                                     priority_label="low",

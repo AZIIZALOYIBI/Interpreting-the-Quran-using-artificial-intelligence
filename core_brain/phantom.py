@@ -28,7 +28,7 @@ from typing import Optional
 logger = logging.getLogger(__name__)
 
 REPO_ROOT = Path(os.getenv("GITHUB_WORKSPACE", "."))
-BACKEND_PORT = 18500          # منفذ عشوائي لتفادي التعارض مع العمليات الأخرى
+BACKEND_PORT = 18500          # منفذ ثابت غير قياسي لتفادي التعارض مع العمليات الأخرى
 STARTUP_TIMEOUT = 60          # ثوانٍ للانتظار حتى يستعد الخادم
 HTTP_TIMEOUT = 10             # timeout لكل طلب HTTP
 

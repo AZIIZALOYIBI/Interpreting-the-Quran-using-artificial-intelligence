@@ -191,8 +191,8 @@ class GeneticMemory:
 
         workspace = str(GENOME_DIR.parent)
         cmds = [
-            ["git", "-C", workspace, "config", "user.email", "sentient-core@ai.quran"],
-            ["git", "-C", workspace, "config", "user.name", "Sentient Core"],
+            ["git", "-C", workspace, "config", "--local", "user.email", "sentient-core@ai.quran"],
+            ["git", "-C", workspace, "config", "--local", "user.name", "Sentient Core"],
             ["git", "-C", workspace, "add", str(GENOME_DIR)],
             [
                 "git",
