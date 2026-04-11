@@ -117,7 +117,7 @@ export default function AskForm() {
               <button key={i} onClick={() => { setQuestion(item.question); setResponse(item.response); }}
                 className="w-full text-right p-4 glass rounded-xl border border-white/5 hover:border-quran-gold/20 transition-all">
                 <p className="text-sm text-gray-300 font-display">{item.question}</p>
-                <p className="text-xs text-gray-500 mt-1">{item.response.verses.length} آيات ذات صلة</p>
+                <p className="text-xs text-gray-500 mt-1">{item.response.ayahs.length} آيات ذات صلة</p>
               </button>
             ))}
           </div>

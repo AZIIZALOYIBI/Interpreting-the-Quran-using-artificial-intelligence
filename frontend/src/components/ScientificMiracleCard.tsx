@@ -12,7 +12,7 @@ export default function ScientificMiracleCard({ miracle }: ScientificMiracleCard
     >
       <div className="flex items-start justify-between gap-4 mb-4">
         <h3 className="text-lg font-bold" style={{ color: "var(--claude-text)" }}>
-          {miracle.titleAr}
+          {miracle.title}
         </h3>
         <span
           className="text-xs px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0"
@@ -28,13 +28,13 @@ export default function ScientificMiracleCard({ miracle }: ScientificMiracleCard
       {/* Ayah */}
       <div className="ayah-card mb-4">
         <p className="quran-font mb-3" style={{ color: "var(--claude-text)" }}>
-          {miracle.ayah}
+          {miracle.verse_text}
         </p>
         <div className="flex items-center justify-between text-sm border-t pt-2" style={{ borderColor: "var(--claude-gold-border)" }}>
           <span className="font-semibold" style={{ color: "var(--claude-gold)" }}>
-            {miracle.surahName}
+            {miracle.surah_name}
           </span>
-          <span style={{ color: "var(--claude-text-muted)" }}>{miracle.ayahRef}</span>
+          <span style={{ color: "var(--claude-text-muted)" }}>{miracle.quran_reference}</span>
         </div>
       </div>
 
@@ -53,7 +53,7 @@ export default function ScientificMiracleCard({ miracle }: ScientificMiracleCard
           </span>
         </div>
         <p className="text-sm leading-relaxed" style={{ color: "var(--claude-text-secondary)" }}>
-          {miracle.scientificFact}
+          {miracle.scientific_fact}
         </p>
       </div>
     </div>

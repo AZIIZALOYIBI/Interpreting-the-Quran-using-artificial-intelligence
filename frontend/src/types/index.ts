@@ -1,3 +1,25 @@
+export interface Ayah {
+  id: number;
+  surah_id: number;
+  ayah_number: number;
+  text_uthmani: string;
+  text_simple: string;
+  surah_name?: string;
+  surah_name_ar?: string;
+  tafsir?: string;
+  relevance_score?: number;
+}
+
+export interface Message {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  ayahs?: Ayah[];
+  category?: string;
+  practical_steps?: string[];
+  timestamp: Date;
+}
+
 export interface QuranVerse {
   id: number;
   surah_number: number;
@@ -29,11 +51,10 @@ export interface AskQuranRequest {
 
 export interface AskQuranResponse {
   answer: string;
-  verses: QuranVerse[];
+  ayahs: Ayah[];
   category: string;
-  confidence: number;
-  related_topics: string[];
-  tafsir_notes: string[];
+  practical_steps: string[];
+  disclaimer: string;
 }
 
 export interface ScientificMiracle {
@@ -65,6 +86,23 @@ export interface SearchResult {
   total_count: number;
   query: string;
   suggestions: string[];
+}
+
+export interface Tafsir {
+  id: number;
+  ayahId: number;
+  scholarName: string;
+  scholarNameAr: string;
+  text: string;
+  source: string;
+}
+
+export interface SurahInfo {
+  id: number;
+  nameAr: string;
+  nameEn: string;
+  ayahCount: number;
+  revelationType: "meccan" | "medinan";
 }
 
 export interface Surah {

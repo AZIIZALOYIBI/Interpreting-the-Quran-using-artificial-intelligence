@@ -78,13 +78,13 @@ const SURAHS: SurahInfo[] = [
 
 const SAMPLE_AYAHS: Record<number, Ayah[]> = {
   1: [
-    { id: 1, surahId: 1, surahName: "Al-Fatihah", surahNameAr: "الفاتحة", ayahNumber: 1, textUthmani: "بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ", textSimple: "بسم الله الرحمن الرحيم" },
-    { id: 2, surahId: 1, surahName: "Al-Fatihah", surahNameAr: "الفاتحة", ayahNumber: 2, textUthmani: "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ", textSimple: "الحمد لله رب العالمين" },
-    { id: 3, surahId: 1, surahName: "Al-Fatihah", surahNameAr: "الفاتحة", ayahNumber: 3, textUthmani: "الرَّحْمَـٰنِ الرَّحِيمِ", textSimple: "الرحمن الرحيم" },
-    { id: 4, surahId: 1, surahName: "Al-Fatihah", surahNameAr: "الفاتحة", ayahNumber: 4, textUthmani: "مَالِكِ يَوْمِ الدِّينِ", textSimple: "مالك يوم الدين" },
-    { id: 5, surahId: 1, surahName: "Al-Fatihah", surahNameAr: "الفاتحة", ayahNumber: 5, textUthmani: "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ", textSimple: "إياك نعبد وإياك نستعين" },
-    { id: 6, surahId: 1, surahName: "Al-Fatihah", surahNameAr: "الفاتحة", ayahNumber: 6, textUthmani: "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ", textSimple: "اهدنا الصراط المستقيم" },
-    { id: 7, surahId: 1, surahName: "Al-Fatihah", surahNameAr: "الفاتحة", ayahNumber: 7, textUthmani: "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ", textSimple: "صراط الذين أنعمت عليهم غير المغضوب عليهم ولا الضالين" },
+    { id: 1, surah_id: 1, surah_name: "Al-Fatihah", surah_name_ar: "الفاتحة", ayah_number: 1, text_uthmani: "بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ", text_simple: "بسم الله الرحمن الرحيم" },
+    { id: 2, surah_id: 1, surah_name: "Al-Fatihah", surah_name_ar: "الفاتحة", ayah_number: 2, text_uthmani: "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ", text_simple: "الحمد لله رب العالمين" },
+    { id: 3, surah_id: 1, surah_name: "Al-Fatihah", surah_name_ar: "الفاتحة", ayah_number: 3, text_uthmani: "الرَّحْمَـٰنِ الرَّحِيمِ", text_simple: "الرحمن الرحيم" },
+    { id: 4, surah_id: 1, surah_name: "Al-Fatihah", surah_name_ar: "الفاتحة", ayah_number: 4, text_uthmani: "مَالِكِ يَوْمِ الدِّينِ", text_simple: "مالك يوم الدين" },
+    { id: 5, surah_id: 1, surah_name: "Al-Fatihah", surah_name_ar: "الفاتحة", ayah_number: 5, text_uthmani: "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ", text_simple: "إياك نعبد وإياك نستعين" },
+    { id: 6, surah_id: 1, surah_name: "Al-Fatihah", surah_name_ar: "الفاتحة", ayah_number: 6, text_uthmani: "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ", text_simple: "اهدنا الصراط المستقيم" },
+    { id: 7, surah_id: 1, surah_name: "Al-Fatihah", surah_name_ar: "الفاتحة", ayah_number: 7, text_uthmani: "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ", text_simple: "صراط الذين أنعمت عليهم غير المغضوب عليهم ولا الضالين" },
   ],
 };
 
@@ -228,11 +228,11 @@ export default function QuranReader() {
           ) : ayahs.length > 0 ? (
             <div className="space-y-4">
               {ayahs.map((ayah) => (
-                <div key={ayah.ayahNumber} className="ayah-card">
+                <div key={ayah.ayah_number} className="ayah-card">
                   <p className="quran-font mb-3" style={{ fontSize: `${fontSize}rem`, color: "var(--claude-text)" }}>
-                    {ayah.textUthmani}
+                    {ayah.text_uthmani}
                     <span className="text-base mr-2" style={{ color: "var(--claude-gold)" }}>
-                      ﴿{ayah.ayahNumber}﴾
+                      ﴿{ayah.ayah_number}﴾
                     </span>
                   </p>
                 </div>

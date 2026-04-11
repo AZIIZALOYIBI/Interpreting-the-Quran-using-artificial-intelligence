@@ -1,0 +1,189 @@
+name: 🧬 The Sentient Core
+
+on:
+  issues:
+    types: [labeled]
+  # 🎯 صائد الديون التقنية يستيقظ كل يوم أحد منتصف الليل تلقائياً
+  schedule:
+    - cron: "0 0 * * 0"
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "رقم الـ Issue (0 = فحص صحة، -1 = صيد ديون تقنية)"
+        required: false
+        default: "0"
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  # ══════════════════════════════════════════════════════════
+  # Job 1: النواة الواعية الكاملة (Issue → PR)
+  # ══════════════════════════════════════════════════════════
+  think-and-evolve:
+    name: 🧠 Sentient Core — Think & Evolve
+    if: >
+      (github.event_name == 'issues' && github.event.label.name == 'evolve') ||
+      (github.event_name == 'workflow_dispatch' && inputs.issue_number != '-1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      # ── 1. تنزيل المستودع بالتاريخ الكامل (لاستعادة الجينوم أيضاً) ──
+      - name: 🛰️ Download Repository Matrix
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
+      # ── 2. إعداد Python ──
+      - name: 🧠 Initialize Neural Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # ── 3. تثبيت تبعيات النواة + ChromaDB (الذاكرة الجينية) ──
+      - name: 💉 Inject Neural Dependencies (with Genetic Memory)
+        run: |
+          pip install --quiet \
+            openai>=1.68.2 \
+            PyGithub>=2.1.0 \
+            chromadb>=0.4.0 \
+            flake8>=7.0.0
+
+      # ── 4. تثبيت تبعيات Backend للاختبارات ──
+      - name: 📦 Install Backend Dependencies
+        run: |
+          pip install --quiet \
+            fastapi==0.109.1 \
+            uvicorn \
+            pydantic>=2.7.4 \
+            pydantic-settings==2.1.0 \
+            python-dotenv==1.0.0 \
+            httpx==0.26.0 \
+            python-multipart==0.0.22 \
+            pytest>=8.0.0 \
+            pytest-asyncio \
+            pytest-cov \
+            markitdown[pdf]==0.1.5 \
+            sqlalchemy \
+            aiohttp
+
+      # ── 5. استعادة الجينوم من المستودع (إن وُجد) ──
+      - name: 🧬 Restore Genetic Genome
+        run: |
+          if [ -d "ai_genome" ]; then
+            echo "🧬 Genome directory found — $(find ai_genome -name '*.bin' -o -name '*.sqlite3' | wc -l) files loaded."
+          else
+            echo "🧬 No prior genome — starting fresh evolution."
+          fi
+
+      # ── 6. تشغيل النواة الواعية الكاملة ──
+      - name: 🦾 Execute Sentient Core (with Genetic Memory + Phantom Sandbox)
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPO: ${{ github.repository }}
+          ISSUE_NUMBER: >-
+            ${{
+              github.event_name == 'workflow_dispatch'
+              && inputs.issue_number
+              || github.event.issue.number
+            }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: |
+          cd ${{ github.workspace }}/core_brain
+          python main.py
+
+      # ── 7. التحقق المستقل من الاختبارات ──
+      - name: 🧪 Independent Test Validation
+        working-directory: backend
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+        run: |
+          python -m pytest tests/ -v --tb=short -q
+          echo "✅ All tests passed."
+
+      # ── 8. فحص TypeScript (اختياري) ──
+      - name: 🌐 Frontend Type Check
+        working-directory: frontend
+        run: |
+          npm ci --silent
+          npx tsc --noEmit
+        continue-on-error: true
+
+      # ── 9. حلقة التصحيح الذاتي عند الفشل ──
+      - name: 🔁 Self-Correction Loop (On Failure)
+        if: failure()
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPO: ${{ github.repository }}
+          ISSUE_NUMBER: >-
+            ${{
+              github.event_name == 'workflow_dispatch'
+              && inputs.issue_number
+              || github.event.issue.number
+            }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: |
+          echo "🔁 Failure detected — Genetic Memory will encode this for future prevention."
+          python -c "
+          import sys, os
+          sys.path.insert(0, '${{ github.workspace }}/core_brain')
+          from memory import GeneticMemory
+          genome = GeneticMemory()
+          genome.encode_experience(
+            task='GitHub Actions Workflow Run',
+            error_report='Workflow step failed — see Actions log for details.',
+            final_fix='Investigate failed step and apply corrections manually.',
+            attempt_number=99,
+          )
+          genome.persist_to_repo()
+          print(f'🧬 Failure encoded. Genome now has {genome.gene_count} genes.')
+          "
+
+  # ══════════════════════════════════════════════════════════
+  # Job 2: صائد الديون التقنية (Proactive Scheduled)
+  # ══════════════════════════════════════════════════════════
+  tech-debt-predator:
+    name: 🎯 Tech-Debt Predator — Proactive Hunt
+    if: >
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.issue_number == '-1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: 🛰️ Download Repository Matrix
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: 🧠 Initialize Neural Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 💉 Inject Predator Dependencies
+        run: |
+          pip install --quiet \
+            openai>=1.68.2 \
+            PyGithub>=2.1.0 \
+            flake8>=7.0.0
+
+      - name: 🎯 Unleash Tech-Debt Predator
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPO: ${{ github.repository }}
+          ISSUE_NUMBER: "0"
+          PREDATOR_MODE: "true"
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: |
+          cd ${{ github.workspace }}/core_brain
+          python main.py

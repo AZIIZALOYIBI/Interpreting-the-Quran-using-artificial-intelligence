@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { AskQuranResponse } from "@/types";
-import QuranVerse from "./QuranVerse";
 
 interface ResponseCardProps {
   response: AskQuranResponse;
@@ -19,9 +18,6 @@ export default function ResponseCard({ response, question }: ResponseCardProps) 
             <h3 className="text-lg font-bold font-display text-white">الإرشاد القرآني</h3>
             <p className="text-xs text-gray-400">بناءً على سؤالك: {question}</p>
           </div>
-          <div className="mr-auto">
-            <div className="px-3 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/20">دقة {Math.round(response.confidence * 100)}%</div>
-          </div>
         </div>
         <p className="text-gray-200 leading-relaxed font-display text-base whitespace-pre-wrap">{response.answer}</p>
         <div className="mt-6 flex items-center gap-2">
@@ -30,44 +26,50 @@ export default function ResponseCard({ response, question }: ResponseCardProps) 
         </div>
       </motion.div>
 
-      {response.verses.length > 0 && (
+      {response.ayahs.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-4">
           <h3 className="text-lg font-bold font-display text-quran-gold flex items-center gap-2">
             <span>📖</span><span>الآيات القرآنية ذات الصلة</span>
-            <span className="text-sm text-gray-500 font-normal">({response.verses.length} آيات)</span>
+            <span className="text-sm text-gray-500 font-normal">({response.ayahs.length} آيات)</span>
           </h3>
-          <div className="space-y-4">{response.verses.map((verse, i) => (<QuranVerse key={i} verse={verse} index={i} />))}</div>
+          <div className="space-y-4">
+            {response.ayahs.map((ayah, i) => (
+              <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}
+                className="glass rounded-xl p-6 border border-white/5 hover:border-quran-gold/20 transition-all">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="verse-number">{ayah.ayah_number}</span>
+                  <span className="text-sm font-bold font-display text-quran-gold">{ayah.surah_name_ar ?? ayah.surah_name}</span>
+                </div>
+                <p className="quran-text text-xl sm:text-2xl text-white leading-loose text-center py-4">{ayah.text_uthmani || ayah.text_simple}</p>
+                {ayah.tafsir && (
+                  <div className="pt-4 border-t border-white/5">
+                    <p className="text-sm text-gray-400 leading-relaxed font-display">{ayah.tafsir}</p>
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
       )}
 
-      {response.tafsir_notes && response.tafsir_notes.length > 0 && (
+      {response.practical_steps && response.practical_steps.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-2xl p-6 border border-white/5">
-          <h3 className="text-lg font-bold font-display text-white mb-4 flex items-center gap-2"><span>📝</span><span>ملاحظات تفسيرية</span></h3>
+          <h3 className="text-lg font-bold font-display text-white mb-4 flex items-center gap-2"><span>✅</span><span>خطوات عملية</span></h3>
           <div className="space-y-3">
-            {response.tafsir_notes.map((note, i) => (
+            {response.practical_steps.map((step, i) => (
               <div key={i} className="flex gap-3 p-3 rounded-lg bg-white/5">
                 <span className="text-quran-gold mt-1">◆</span>
-                <p className="text-gray-300 text-sm leading-relaxed font-display">{note}</p>
+                <p className="text-gray-300 text-sm leading-relaxed font-display">{step}</p>
               </div>
             ))}
           </div>
         </motion.div>
       )}
 
-      {response.related_topics && response.related_topics.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
-          <h4 className="text-sm font-display text-gray-400 mb-3">مواضيع ذات صلة:</h4>
-          <div className="flex flex-wrap gap-2">
-            {response.related_topics.map((topic, i) => (
-              <span key={i} className="px-4 py-2 glass rounded-full text-sm text-gray-300 border border-white/5 hover:border-quran-gold/20 hover:text-quran-gold transition-all cursor-pointer font-display">{topic}</span>
-            ))}
-          </div>
-        </motion.div>
-      )}
-
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="p-4 rounded-xl bg-yellow-500/5 border border-yellow-500/10">
-        <p className="text-xs text-yellow-400/70 text-center font-display">⚠️ هذا الإرشاد مبني على تحليل الذكاء الاصطناعي للنصوص القرآنية وهو للتوجيه العام فقط. يُرجى استشارة العلماء المؤهلين في المسائل الشرعية الدقيقة.</p>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="p-4 rounded-xl bg-yellow-500/5 border border-yellow-500/10">
+        <p className="text-xs text-yellow-400/70 text-center font-display">⚠️ {response.disclaimer || "هذا الإرشاد للتوجيه العام فقط. يُرجى استشارة العلماء المؤهلين في المسائل الشرعية الدقيقة."}</p>
       </motion.div>
     </div>
   );
 }
+
