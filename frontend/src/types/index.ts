@@ -1,3 +1,18 @@
+export interface Ayah {
+  textUthmani: string;
+  surahNameAr: string;
+  ayahNumber: number;
+  tafsir?: string;
+}
+
+export interface Message {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  ayahs?: Ayah[];
+  timestamp?: Date;
+}
+
 export interface QuranVerse {
   id: number;
   surah_number: number;
