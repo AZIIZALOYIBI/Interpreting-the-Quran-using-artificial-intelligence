@@ -74,7 +74,7 @@ export default function TafsirPanel({ ayah, onClose }: TafsirPanelProps) {
           <div>
             <h2 className="text-lg font-bold">التفسير</h2>
             <p className="text-emerald-200 text-sm">
-              سورة {ayah.surahNameAr} - الآية {ayah.ayahNumber}
+              سورة {ayah.surah_name_ar} - الآية {ayah.ayah_number}
             </p>
           </div>
           <button
@@ -88,7 +88,7 @@ export default function TafsirPanel({ ayah, onClose }: TafsirPanelProps) {
 
         {/* Ayah text */}
         <div className="ayah-card mx-4 mt-4">
-          <p className="quran-font text-gray-800">{ayah.textUthmani}</p>
+          <p className="quran-font text-gray-800">{ayah.text_uthmani}</p>
         </div>
 
         {/* Scholar tabs */}

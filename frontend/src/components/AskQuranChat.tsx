@@ -30,13 +30,13 @@ const CATEGORY_LABELS: Record<string, string> = {
   general: "عام",
 };
 
-function CopyButton({ message }: { message: { content: string; ayahs?: { surahNameAr: string; ayahNumber: number; textUthmani: string }[] } }) {
+function CopyButton({ message }: { message: { content: string; ayahs?: { surah_name_ar?: string; ayah_number: number; text_uthmani: string }[] } }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
     let text = message.content;
     if (message.ayahs && message.ayahs.length > 0) {
-      text += "\n\n" + message.ayahs.map((a) => `${a.textUthmani}\n— ${a.surahNameAr}: ${a.ayahNumber}`).join("\n\n");
+      text += "\n\n" + message.ayahs.map((a) => `${a.text_uthmani}\n— ${a.surah_name_ar ?? ""}: ${a.ayah_number}`).join("\n\n");
     }
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
@@ -64,16 +64,16 @@ function AyahCard({ ayah }: { ayah: Ayah }) {
   return (
     <div className="ayah-card">
       <p className="quran-font mb-3" style={{ color: "var(--claude-text)" }}>
-        {ayah.textUthmani}
+        {ayah.text_uthmani}
       </p>
       <div
         className="flex items-center justify-between text-sm border-t pt-2"
         style={{ borderColor: "var(--claude-gold-border)" }}
       >
         <span className="font-semibold" style={{ color: "var(--claude-gold)" }}>
-          {ayah.surahNameAr}
+          {ayah.surah_name_ar}
         </span>
-        <span style={{ color: "var(--claude-text-muted)" }}>الآية {ayah.ayahNumber}</span>
+        <span style={{ color: "var(--claude-text-muted)" }}>الآية {ayah.ayah_number}</span>
       </div>
       {ayah.tafsir && (
         <div
@@ -125,7 +125,7 @@ export default function AskQuranChat() {
       setLoading(true);
 
       try {
-        const response = await askQuran(text.trim(), category);
+        const response = await askQuran({ question: text.trim(), category });
 
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
@@ -133,7 +133,7 @@ export default function AskQuranChat() {
           content: response.answer,
           ayahs: response.ayahs,
           category: response.category,
-          practicalSteps: response.practicalSteps,
+          practical_steps: response.practical_steps,
           timestamp: new Date(),
         };
 
@@ -294,7 +294,7 @@ export default function AskQuranChat() {
               )}
 
               {/* Practical steps */}
-              {message.practicalSteps && message.practicalSteps.length > 0 && (
+              {message.practical_steps && message.practical_steps.length > 0 && (
                 <div
                   className="mt-4 rounded-xl p-4 border"
                   style={{
@@ -309,7 +309,7 @@ export default function AskQuranChat() {
                     <span>✅</span> خطوات عملية
                   </p>
                   <ul className="space-y-2">
-                    {message.practicalSteps.map((step, i) => (
+                    {message.practical_steps.map((step, i) => (
                       <li
                         key={i}
                         className="text-sm flex items-start gap-2"

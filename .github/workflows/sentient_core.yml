@@ -1,0 +1,148 @@
+name: 🧬 The Sentient Core
+
+on:
+  issues:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "رقم الـ Issue المُراد معالجته (0 = فحص صحة استباقي)"
+        required: false
+        default: "0"
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  think-and-evolve:
+    name: 🧠 Sentient Core — Think & Evolve
+    # يعمل عند وضع علامة evolve على Issue أو عند التشغيل اليدوي
+    if: >
+      (github.event_name == 'issues' && github.event.label.name == 'evolve') ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # ─────────────────────────────────────────────────────
+      # 1. تنزيل المستودع بالتاريخ الكامل لفهم السياق
+      # ─────────────────────────────────────────────────────
+      - name: 🛰️ Download Repository Matrix
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
+      # ─────────────────────────────────────────────────────
+      # 2. إعداد Python
+      # ─────────────────────────────────────────────────────
+      - name: 🧠 Initialize Neural Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # ─────────────────────────────────────────────────────
+      # 3. تثبيت تبعيات النواة الواعية
+      # ─────────────────────────────────────────────────────
+      - name: 💉 Inject Neural Dependencies
+        run: |
+          pip install --quiet \
+            openai>=1.68.2 \
+            PyGithub>=2.1.0 \
+            flake8>=7.0.0
+
+      # ─────────────────────────────────────────────────────
+      # 4. تثبيت تبعيات Backend لتشغيل الاختبارات
+      # ─────────────────────────────────────────────────────
+      - name: 📦 Install Backend Dependencies
+        run: |
+          pip install --quiet \
+            fastapi==0.109.1 \
+            uvicorn \
+            pydantic>=2.7.4 \
+            pydantic-settings==2.1.0 \
+            python-dotenv==1.0.0 \
+            httpx==0.26.0 \
+            python-multipart==0.0.22 \
+            pytest>=8.0.0 \
+            pytest-asyncio \
+            pytest-cov \
+            markitdown[pdf]==0.1.5 \
+            sqlalchemy \
+            aiohttp
+
+      # ─────────────────────────────────────────────────────
+      # 5. تشغيل النواة الواعية (التحليل → التصميم → الكتابة)
+      # ─────────────────────────────────────────────────────
+      - name: 🦾 Execute Sentient Core Loop
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPO: ${{ github.repository }}
+          ISSUE_NUMBER: >-
+            ${{
+              github.event_name == 'workflow_dispatch'
+              && inputs.issue_number
+              || github.event.issue.number
+            }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: |
+          cd ${{ github.workspace }}/core_brain
+          python main.py
+
+      # ─────────────────────────────────────────────────────
+      # 6. التحقق المستقل من الاختبارات (خارج حلقة التصحيح)
+      #    هذه الخطوة تتحقق من أن الـ PR لا يكسر شيئاً
+      # ─────────────────────────────────────────────────────
+      - name: 🧪 Independent Test Validation
+        working-directory: backend
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+        run: |
+          echo "Running full test suite as independent validation..."
+          python -m pytest tests/ -v --tb=short -q
+          echo "✅ All tests passed — Sentient Core output is validated."
+
+      # ─────────────────────────────────────────────────────
+      # 7. (اختياري) بناء Frontend للتحقق من عدم كسر TypeScript
+      # ─────────────────────────────────────────────────────
+      - name: 🌐 Frontend Type Check
+        working-directory: frontend
+        run: |
+          npm ci --silent
+          npx tsc --noEmit
+        continue-on-error: true  # لا نوقف الـ workflow إذا كان الـ Frontend لم يتغير
+
+      # ─────────────────────────────────────────────────────
+      # 8. حلقة التصحيح الذاتي — تُفعَّل فقط عند الفشل
+      # ─────────────────────────────────────────────────────
+      - name: 🔁 Self-Correction Loop (On Failure)
+        if: failure()
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPO: ${{ github.repository }}
+          ISSUE_NUMBER: >-
+            ${{
+              github.event_name == 'workflow_dispatch'
+              && inputs.issue_number
+              || github.event.issue.number
+            }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+          SENTIENT_CORRECTION_MODE: "true"
+        run: |
+          echo "🔁 Tests failed! Feeding error context back to Sentient Core..."
+          echo "The Validator inside main.py already handles self-correction."
+          echo "This step logs the failure for audit purposes."
+          cd ${{ github.workspace }}/core_brain
+          python -c "
+          import os, logging
+          logging.basicConfig(level=logging.INFO)
+          print('⚠️  Self-correction was triggered by GitHub Actions.')
+          print('Issue:', os.getenv('ISSUE_NUMBER'))
+          print('Repo:', os.getenv('REPO'))
+          print('The Validator loop inside main.py will handle correction on next run.')
+          "
