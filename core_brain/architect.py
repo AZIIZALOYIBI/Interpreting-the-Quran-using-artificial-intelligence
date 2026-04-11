@@ -8,6 +8,10 @@
   - ترتيب التعديلات لتفادي التعارضات.
 
 يستخدم GPT-4o مع استجابة JSON منظَّمة.
+
+🧬 يدمج الذاكرة الجينية:
+  قبل أي استدعاء لـ GPT-4o، يستعلم الذاكرة عن أخطاء سابقة مشابهة
+  ويُدرجها في الـ prompt كـ "قواعد لا تكسرها".
 """
 
 from __future__ import annotations
@@ -21,6 +25,7 @@ from typing import Literal
 from openai import OpenAI
 
 from analyst import ProjectContext
+from memory import GeneticMemory
 
 logger = logging.getLogger(__name__)
 
@@ -104,10 +109,14 @@ _ARCHITECT_SYSTEM_PROMPT = """
 
 
 class Architect:
-    """يُصمِّم خطة الحل المعمارية باستخدام GPT-4o."""
+    """يُصمِّم خطة الحل المعمارية باستخدام GPT-4o مُعزَّزاً بالذاكرة الجينية."""
 
     def __init__(self, api_key: str | None = None) -> None:
         self.client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
+        self.memory = GeneticMemory()
+        logger.info(
+            "Architect: الذاكرة الجينية تحتوي على %d جين/جينات.", self.memory.gene_count
+        )
 
     def design_solution(self, task: str, context: ProjectContext) -> Blueprint:
         """
@@ -125,8 +134,19 @@ class Architect:
         Blueprint
             المخطط المعماري الكامل.
         """
+        # ── 🧬 استعادة الأخطاء السابقة من الذاكرة الجينية ──
+        past_mistakes = self.memory.remember_past_mistakes(task)
+        memory_block = ""
+        if past_mistakes:
+            memory_block = (
+                "\n\n## ⚠️ تحذير من الذاكرة الجينية — أخطاء حدثت في مهام مشابهة:\n"
+                + past_mistakes
+                + "\n**لا تكرر هذه الأخطاء أبداً. اقرأها بعناية قبل التصميم.**\n"
+            )
+
         user_message = (
-            f"## المتطلب\n{task}\n\n"
+            f"## المتطلب\n{task}\n"
+            f"{memory_block}\n"
             f"## سياق المشروع الحالي\n{context.to_prompt_block()}"
         )
 
@@ -139,7 +159,7 @@ class Architect:
                 {"role": "system", "content": _ARCHITECT_SYSTEM_PROMPT},
                 {"role": "user", "content": user_message},
             ],
-            temperature=0.2,  # دقة عالية في التصميم
+            temperature=0.2,
         )
 
         raw = response.choices[0].message.content or "{}"

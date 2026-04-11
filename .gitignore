@@ -56,3 +56,10 @@ htmlcov/
 *.pid
 *.seed
 *.pid.lock
+
+# Sentient Core — Genetic Memory (يُحفَظ عبر git commit مستقل بـ [skip ci])
+# أزِل هذا السطر إذا أردت رؤية الجينوم في المستودع
+# ai_genome/
+
+# Sentient Core — مجلدات مؤقتة
+core_brain/__pycache__/

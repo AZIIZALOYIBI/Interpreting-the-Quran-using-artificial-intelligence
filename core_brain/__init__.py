@@ -4,10 +4,13 @@
 
 الوحدات:
   analyst   — تحليل هيكل المشروع والسياق الكامل (RAG + AST)
-  architect — تصميم خطة الحل المعمارية باستخدام GPT-4o
+  architect — تصميم خطة الحل المعمارية باستخدام GPT-4o + الذاكرة الجينية
   coder     — توليد الكود وتطبيق التعديلات على المستودع
-  validator — التحقق الذاتي وحلقة التصحيح (linting + syntax)
+  validator — التحقق الذاتي وحلقة التصحيح (linting + pytest)
+  memory    — الذاكرة الجينية (ChromaDB) — تحفظ الخبرات وتمنع تكرار الأخطاء
+  phantom   — المحاكاة الشبحية (Docker) — اختبار التطبيق الحقيقي قبل PR
+  predator  — صائد الديون التقنية — يستيقظ استباقياً لاكتشاف مشاكل الكود
 """
 
-__version__ = "1.0.0"
-__all__ = ["analyst", "architect", "coder", "validator"]
+__version__ = "2.0.0"
+__all__ = ["analyst", "architect", "coder", "validator", "memory", "phantom", "predator"]
