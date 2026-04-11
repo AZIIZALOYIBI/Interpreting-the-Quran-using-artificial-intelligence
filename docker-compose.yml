@@ -33,6 +33,10 @@ services:
       - PINECONE_API_KEY=${PINECONE_API_KEY:-}
       - PINECONE_ENV=${PINECONE_ENV:-}
       - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000}
+      - VLLM_BASE_URL=${VLLM_BASE_URL:-}
+      - VLLM_MODEL_NAME=${VLLM_MODEL_NAME:-glm-4.7-fp8}
+      - GPTQ_MODEL_PATH=${GPTQ_MODEL_PATH:-}
+      - GPTQ_USE_TRITON=${GPTQ_USE_TRITON:-false}
     depends_on:
       db:
         condition: service_healthy

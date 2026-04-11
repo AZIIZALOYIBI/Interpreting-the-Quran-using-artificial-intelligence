@@ -15,6 +15,21 @@ class Settings(BaseSettings):
     GPTQ_MODEL_PATH: str = ""
     # Enable Triton kernels for faster GPTQ inference (requires triton package).
     GPTQ_USE_TRITON: bool = False
+    # vLLM server — set to the base URL of a running vLLM OpenAI-compatible server.
+    # Example: "http://localhost:8080/v1"
+    # Serves GLM-4.7-FP8 (or any model) with the OpenAI-compatible API.
+    # Start the server with:
+    #   vllm serve zai-org/GLM-4.7-FP8 \
+    #       --tensor-parallel-size 4 \
+    #       --speculative-config.method mtp \
+    #       --speculative-config.num_speculative_tokens 1 \
+    #       --tool-call-parser glm47 \
+    #       --reasoning-parser glm45 \
+    #       --enable-auto-tool-choice \
+    #       --served-model-name glm-4.7-fp8
+    VLLM_BASE_URL: str = ""
+    # The model name as registered with --served-model-name in the vLLM server.
+    VLLM_MODEL_NAME: str = "glm-4.7-fp8"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
