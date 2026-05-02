@@ -1,0 +1,323 @@
+# Instincts generated from https://github.com/AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+# Generated: 2026-05-02T22:18:07.475Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: Interpreting-the-Quran-using-artificial-intelligence-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Commit Length
+
+## Action
+
+Write moderate-length commit messages (~51 characters)
+
+## Evidence
+
+- Average commit message length: 51 chars
+- Based on 3 commits
+
+---
+id: Interpreting-the-Quran-using-artificial-intelligence-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Naming Files
+
+## Action
+
+Use camelCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: camelCase
+
+---
+id: Interpreting-the-Quran-using-artificial-intelligence-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: Interpreting-the-Quran-using-artificial-intelligence-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: Interpreting-the-Quran-using-artificial-intelligence-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: Interpreting-the-Quran-using-artificial-intelligence-workflow-update-frontend-dependencies
+trigger: "when doing update frontend dependencies"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Workflow Update Frontend Dependencies
+
+## Action
+
+Follow the update-frontend-dependencies workflow:
+1. Modify frontend/package.json to update dependency versions.
+2. Regenerate frontend/package-lock.json to reflect dependency changes.
+3. Optionally update frontend/tsconfig.json if required by dependency changes.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: frontend/package.json, frontend/package-lock.json, frontend/tsconfig.json
+
+---
+id: interpreting-the-quran-using-artificial-intelligence-instinct-file-naming
+trigger: "When creating or renaming a file in the codebase"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Instinct File Naming
+
+## Action
+
+Use camelCase for file names
+
+## Evidence
+
+- Pattern in namingConventions.files
+
+---
+id: interpreting-the-quran-using-artificial-intelligence-instinct-function-naming
+trigger: "When defining a function"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Instinct Function Naming
+
+## Action
+
+Name the function using camelCase
+
+## Evidence
+
+- Pattern in namingConventions.functions
+
+---
+id: interpreting-the-quran-using-artificial-intelligence-instinct-class-naming
+trigger: "When defining a class"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Instinct Class Naming
+
+## Action
+
+Name the class using PascalCase
+
+## Evidence
+
+- Pattern in namingConventions.classes
+
+---
+id: interpreting-the-quran-using-artificial-intelligence-instinct-constant-naming
+trigger: "When defining a constant"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Instinct Constant Naming
+
+## Action
+
+Name the constant using SCREAMING_SNAKE_CASE
+
+## Evidence
+
+- Pattern in namingConventions.constants
+
+---
+id: interpreting-the-quran-using-artificial-intelligence-instinct-import-style
+trigger: "When importing modules"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Instinct Import Style
+
+## Action
+
+Use relative import paths
+
+## Evidence
+
+- Pattern in importStyle
+
+---
+id: interpreting-the-quran-using-artificial-intelligence-instinct-export-style
+trigger: "When exporting from a module"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Instinct Export Style
+
+## Action
+
+Use named exports
+
+## Evidence
+
+- Pattern in exportStyle
+
+---
+id: interpreting-the-quran-using-artificial-intelligence-instinct-test-location
+trigger: "When adding or updating tests"
+confidence: 0.7
+domain: testing
+source: repo-analysis
+source_repo: AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Instinct Test Location
+
+## Action
+
+Place test files in a separate directory from source files
+
+## Evidence
+
+- Pattern in architecture.testLocation
+
+---
+id: interpreting-the-quran-using-artificial-intelligence-instinct-git-commit-prefix-fix
+trigger: "When committing a change that fixes a bug or sync issue"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Instinct Git Commit Prefix Fix
+
+## Action
+
+Prefix the commit message with 'fix:'
+
+## Evidence
+
+- Seen in commit 'fix: regenerate package-lock.json to fix npm ci sync'
+- Pattern in commits.prefixes
+
+---
+id: interpreting-the-quran-using-artificial-intelligence-instinct-git-commit-format
+trigger: "When writing a commit message"
+confidence: 0.8
+domain: git
+source: repo-analysis
+source_repo: AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Instinct Git Commit Format
+
+## Action
+
+Use a short prefix (e.g., 'fix:') followed by a concise description (~50 characters)
+
+## Evidence
+
+- Pattern in commits.averageLength
+- Pattern in commits.prefixes
+
+---
+id: interpreting-the-quran-using-artificial-intelligence-instinct-update-frontend-dependencies
+trigger: "When someone wants to upgrade, fix, or synchronize frontend npm dependencies"
+confidence: 0.95
+domain: workflow
+source: repo-analysis
+source_repo: AZIIZALOYIBI/Interpreting-the-Quran-using-artificial-intelligence
+---
+
+# Interpreting The Quran Using Artificial Intelligence Instinct Update Frontend Dependencies
+
+## Action
+
+Modify frontend/package.json to update dependency versions, regenerate frontend/package-lock.json, and optionally update frontend/tsconfig.json if required
+
+## Evidence
+
+- Workflow 'update-frontend-dependencies'
+- Example commit sequence modifying package.json, package-lock.json, tsconfig.json
+
