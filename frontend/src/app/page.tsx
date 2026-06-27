@@ -31,6 +31,27 @@ export default function HomePage() {
     { step: "3", title: "استلم الإجابة", description: "احصل على إرشاد مع آيات مرتبطة يمكنك الرجوع إليها مباشرة." },
   ];
 
+  const useCases = [
+    { title: "قرارات العمل والمال", description: "إرشاد أخلاقي وعملي للتعاملات المالية، العقود، والإنصاف في بيئة العمل." },
+    { title: "العلاقات الأسرية", description: "توجيهات واضحة لبناء المودة والرحمة وحل الخلافات بميزان قرآني متزن." },
+    { title: "تنمية النفس", description: "مسار يومي للثبات، الصبر، وإعادة ترتيب الأولويات وفق القيم القرآنية." },
+  ];
+
+  const faqs = [
+    {
+      question: "هل المنصة تقدم فتوى شرعية؟",
+      answer: "لا. المنصة تقدم إرشادًا عامًا وتدبرًا قرآنيًا، ولا تغني عن الرجوع للعلماء المؤهلين في مسائل الفتوى.",
+    },
+    {
+      question: "كيف أستفيد بأفضل شكل من الإجابات؟",
+      answer: "اكتب سؤالك بصيغة واضحة وحدد الفئة المناسبة، ثم راجع الآيات المرتبطة وتفسيرها قبل اتخاذ القرار.",
+    },
+    {
+      question: "هل يمكنني استخدام المنصة يوميًا؟",
+      answer: "نعم. المنصة مصممة للاستخدام السريع اليومي على الجوال وسطح المكتب مع تجربة عربية كاملة.",
+    },
+  ];
+
   return (
     <main className="relative overflow-hidden">
       <div className="absolute inset-0 animated-bg" />
@@ -72,7 +93,7 @@ export default function HomePage() {
 
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-3xl border border-white/10 p-6 sm:p-8">
               <h2 className="mb-6 text-2xl font-bold text-white">لماذا هذه المنصة؟</h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="mb-6 grid grid-cols-2 gap-4">
                 {[
                   { value: "6,236", label: "آية" },
                   { value: "114", label: "سورة" },
@@ -84,6 +105,12 @@ export default function HomePage() {
                     <p className="text-sm text-gray-300">{item.label}</p>
                   </div>
                 ))}
+              </div>
+              <div className="rounded-2xl border border-quran-gold/20 bg-black/30 p-4">
+                <p className="mb-2 text-sm text-quran-gold">مثال سريع للإجابة</p>
+                <p className="text-sm leading-7 text-gray-300">
+                  &quot;عند ضغط العمل، وجّه القرآن إلى التوازن بين السعي والسكينة، والصدق في النية، مع الصبر واتخاذ الأسباب.&quot;
+                </p>
               </div>
             </motion.div>
           </div>
@@ -126,6 +153,24 @@ export default function HomePage() {
       </section>
 
       <section className="relative px-4 py-16">
+        <div className="mx-auto max-w-7xl">
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-10 text-center">
+            <h2 className="mb-4 text-3xl font-bold gradient-text sm:text-4xl">حالات استخدام واقعية</h2>
+            <p className="mx-auto max-w-2xl text-gray-300">المنصة موجهة لمشكلات الحياة اليومية، لا مجرد عرض معلومات.</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            {useCases.map((item, index) => (
+              <motion.div key={item.title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }} viewport={{ once: true }} className="glass rounded-2xl border border-white/10 p-6">
+                <h3 className="mb-3 text-xl font-bold text-white">{item.title}</h3>
+                <p className="text-sm leading-7 text-gray-300">{item.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative px-4 py-16">
         <div className="mx-auto max-w-6xl">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-8 text-center">
             <h2 className="mb-4 text-3xl font-bold gradient-text sm:text-4xl">كيف تبدأ خلال دقيقة؟</h2>
@@ -137,6 +182,23 @@ export default function HomePage() {
                 <h3 className="mb-2 text-xl font-bold text-white">{item.title}</h3>
                 <p className="text-sm leading-7 text-gray-300">{item.description}</p>
               </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative px-4 py-10">
+        <div className="mx-auto max-w-5xl">
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-8 text-center">
+            <h2 className="mb-4 text-3xl font-bold gradient-text sm:text-4xl">أسئلة شائعة</h2>
+          </motion.div>
+
+          <div className="space-y-4">
+            {faqs.map((faq) => (
+              <motion.details key={faq.question} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass rounded-2xl border border-white/10 p-5">
+                <summary className="cursor-pointer list-none text-base font-bold text-white">{faq.question}</summary>
+                <p className="mt-3 text-sm leading-7 text-gray-300">{faq.answer}</p>
+              </motion.details>
             ))}
           </div>
         </div>
