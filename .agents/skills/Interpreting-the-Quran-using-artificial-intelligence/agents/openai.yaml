@@ -1,0 +1,6 @@
+interface:
+  display_name: "Interpreting The Quran Using Artificial Intelligence"
+  short_description: "Repo-specific patterns and workflows for Interpreting-the-Quran-using-artificial-intelligence"
+  default_prompt: "Use the Interpreting-the-Quran-using-artificial-intelligence repo skill to follow existing architecture, testing, and workflow conventions."
+policy:
+  allow_implicit_invocation: true
