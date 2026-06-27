@@ -101,6 +101,19 @@ uvicorn main:app --reload --port 8000
 
 ---
 
+## 🚀 Deploy Frontend to GitHub Pages
+
+1. In GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**.
+2. Ensure the default branch is `main` (the deployment workflow triggers on pushes to `main`).
+3. (Recommended) Add repository variable `NEXT_PUBLIC_API_URL` under **Settings → Secrets and variables → Actions → Variables**.
+4. Push your changes to `main`; workflow `.github/workflows/nextjs.yml` will build and deploy `frontend/out` automatically.
+
+Notes:
+- For project pages (`owner/repo`), the frontend auto-uses `/<repo>` as base path during Pages export.
+- For user/organization pages (`<name>.github.io`), it automatically deploys from root `/`.
+
+---
+
 ## 🔑 Environment Variables
 
 Copy `.env.example` to `.env` and fill in:
